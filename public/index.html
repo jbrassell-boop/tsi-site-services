@@ -669,7 +669,9 @@ async function renderCalendar() {
 }
 
 function renderCalLegend() {
-  document.getElementById('calLegend').innerHTML = techs.map(t =>
+  const el = document.getElementById('calLegend');
+  if (!el) return;
+  el.innerHTML = techs.map(t =>
     `<div class="legend-item"><div class="legend-swatch" style="background:${t.Color}"></div>${t.TechnicianName}</div>`
   ).join('');
 }
