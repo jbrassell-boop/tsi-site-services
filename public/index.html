@@ -998,7 +998,36 @@ function itemChanged(trayKey, itemKey, field, val) {
   if (!tray) return;
   const item = (tray.Items || []).find(i => i.ItemKey === itemKey);
   if (!item) return;
-  item[field] = parseInt(val) || 0;
+  item[field] = Math.max(0, parseInt(val) || 0);
+
+  // Clamp: Repaired + SentToTSI + BER must not exceed TotalCount
+  if (field !== 'TotalCount') {
+    // Max allowed for this field = TotalCount minus the other two fields
+    const others = item.RepairedCount + item.SentToTSICount + item.BERCount - item[field];
+    const cap = Math.max(0, item.TotalCount - others);
+    if (item[field] > cap) {
+      item[field] = cap;
+      const irow = document.getElementById(`irow-${itemKey}`);
+      if (irow) {
+        const fi = {RepairedCount:1, SentToTSICount:2, BERCount:3}[field];
+        const inps = irow.querySelectorAll('.item-input[type="number"]');
+        if (inps[fi]) inps[fi].value = item[field];
+      }
+    }
+  } else {
+    // TotalCount changed — trim Repaired then SentTSI then BER if sum now exceeds total
+    let excess = item.RepairedCount + item.SentToTSICount + item.BERCount - item.TotalCount;
+    if (excess > 0) {
+      const irow = document.getElementById(`irow-${itemKey}`);
+      const inps = irow ? irow.querySelectorAll('.item-input[type="number"]') : [];
+      ['RepairedCount','SentToTSICount','BERCount'].forEach((f, i) => {
+        if (excess <= 0) return;
+        const cut = Math.min(item[f], excess);
+        item[f] -= cut; excess -= cut;
+        if (inps[i + 1]) inps[i + 1].value = item[f];
+      });
+    }
+  }
 
   // Update No Chg display
   const nc = item.TotalCount - item.RepairedCount - item.SentToTSICount - item.BERCount;
