@@ -1,10 +1,11 @@
 const serverless = require('serverless-http');
 const app = require('../../app');
 
-// Prepend /api so Express routes match when called via Netlify redirect
+// Strip the /.netlify/functions/api prefix and replace with /api
+// so Express routes like /api/technicians match correctly
 const handler = serverless(app, {
   request(request) {
-    request.url = '/api' + request.url;
+    request.url = request.url.replace(/^\/.netlify\/functions\/api/, '/api');
   }
 });
 
