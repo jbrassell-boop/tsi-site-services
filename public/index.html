@@ -52,14 +52,15 @@
   .cal-dow{display:grid;grid-template-columns:repeat(7,1fr);background:var(--navy)}
   .cal-dow span{color:rgba(255,255,255,.75);font-size:11px;font-weight:700;text-align:center;padding:9px 0;letter-spacing:.5px}
   .cal-days{display:grid;grid-template-columns:repeat(7,1fr)}
-  .cal-day{min-height:78px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:6px 4px;position:relative;cursor:pointer;transition:background .1s}
+  .cal-day{min-height:100px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:6px 4px;position:relative;cursor:pointer;transition:background .1s}
   .cal-day:hover{background:#F8FAFF}
   .cal-day:nth-child(7n){border-right:none}
   .cal-day.other-month{background:#FAFBFD}
   .cal-day.other-month .cal-day-num{color:#C8D0DE}
   .cal-day.today .cal-day-num{background:var(--navy);color:#fff;border-radius:50%;font-weight:800}
   .cal-day-num{font-size:13px;font-weight:600;margin-bottom:3px;width:24px;height:24px;display:flex;align-items:center;justify-content:center}
-  .cal-event{font-size:10px;font-weight:700;padding:2px 5px;border-radius:5px;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;color:#fff;line-height:1.4}
+  .cal-event{font-size:10px;font-weight:700;padding:3px 6px;border-radius:5px;margin-bottom:3px;cursor:pointer;color:#fff;line-height:1.4}
+  .cal-event-dept{font-size:9px;font-weight:500;opacity:.88;display:block;margin-top:1px}
   .cal-event:active{opacity:.75}
   .cal-more{font-size:9px;font-weight:700;color:var(--muted);padding-left:2px}
   .cal-add{position:absolute;bottom:3px;right:3px;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--border);font-size:13px;line-height:1;transition:all .15s}
@@ -658,7 +659,7 @@ async function renderCalendar() {
     html += `<div class="cal-day${isOther?' other-month':''}${isToday?' today':''}" ${!isOther ? `onclick="dayClick('${dateStr}')"`:''}>`;
     html += `<div class="cal-day-num">${day}</div>`;
     show.forEach(ev => {
-      html += `<div class="cal-event" style="background:${techColor(ev.TechnicianKey)}" onclick="event.stopPropagation();editCalEvent(${ev.EventKey})">${shortName(ev.ClientName)}</div>`;
+      html += `<div class="cal-event" style="background:${techColor(ev.TechnicianKey)}" onclick="event.stopPropagation();editCalEvent(${ev.EventKey})">${ev.ClientName}<span class="cal-event-dept">${ev.DepartmentName}</span></div>`;
     });
     if (extra > 0) html += `<div class="cal-more">+${extra} more</div>`;
     if (!isOther) html += `<div class="cal-add">+</div>`;
