@@ -1,0 +1,1477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>TSI Site Services</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  :root{
+    --navy:#00257A;--navy-lt:#1a3d99;--blue:#2E74B5;--red:#B71234;--green:#16A34A;
+    --green-lt:#dcfce7;--red-lt:#fee2e2;--amber:#D97706;--amber-lt:#fef3c7;
+    --muted:#8896AA;--label:#4A5568;--text:#1A202C;--bg:#EEF1F7;
+    --border:#DDE3EE;--border-dk:#C8D4E8;--white:#fff;--radius:14px;
+    --shadow:0 2px 12px rgba(0,0,50,.08);
+    --tech-allen:rgb(34,139,34);--tech-bill:rgb(180,140,0);
+    --tech-charles:rgb(0,140,180);--tech-tim:rgb(190,50,130);
+  }
+  html,body{height:100%;overflow:hidden;font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);font-size:13px}
+
+  /* ── TOP BAR ── */
+  .topbar{height:58px;background:var(--navy);display:flex;align-items:center;padding:0 18px;gap:12px;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,50,.3)}
+  .topbar-logo{display:flex;align-items:center;gap:10px}
+  .topbar-logo svg{width:30px;height:30px;flex-shrink:0}
+  .topbar-title{color:#fff;font-size:17px;font-weight:800;letter-spacing:-.3px}
+  .topbar-sub{color:rgba(255,255,255,.5);font-size:11px;font-weight:500;letter-spacing:.3px}
+  .topbar-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+  .topbar-tech{background:rgba(255,255,255,.12);color:#fff;font-size:12px;font-weight:600;padding:5px 12px;border-radius:20px;border:1px solid rgba(255,255,255,.2);cursor:pointer}
+
+  /* ── TAB BAR ── */
+  .tabbar{display:flex;background:#fff;border-bottom:2px solid var(--border);flex-shrink:0}
+  .tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:10px 0;cursor:pointer;color:var(--muted);font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;border-bottom:3px solid transparent;margin-bottom:-2px;transition:color .15s,border-color .15s}
+  .tab svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2}
+  .tab.active{color:var(--navy);border-bottom-color:var(--navy)}
+
+  /* ── LAYOUT ── */
+  .app{display:flex;flex-direction:column;height:100vh}
+  .content{flex:1;overflow:hidden;position:relative}
+  .view{position:absolute;inset:0;overflow-y:auto;display:none;padding:12px 16px 24px}
+  #view-detail{padding:10px 16px 24px}
+  .view.active{display:block}
+
+  /* ── CALENDAR ── */
+  .cal-header{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+  .cal-nav{background:#fff;border:1px solid var(--border);border-radius:10px;width:40px;height:40px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--navy);font-size:20px;box-shadow:var(--shadow);flex-shrink:0;user-select:none}
+  .cal-nav:active{background:var(--bg)}
+  .cal-month{font-size:20px;font-weight:800;flex:1;text-align:center;color:var(--navy)}
+  .cal-today-btn{background:var(--navy);color:#fff;border:none;border-radius:10px;padding:9px 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:var(--shadow)}
+  .cal-today-btn:active{opacity:.85}
+
+  .cal-grid{background:#fff;border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;box-shadow:var(--shadow)}
+  .cal-dow{display:grid;grid-template-columns:repeat(7,1fr);background:var(--navy)}
+  .cal-dow span{color:rgba(255,255,255,.75);font-size:11px;font-weight:700;text-align:center;padding:9px 0;letter-spacing:.5px}
+  .cal-days{display:grid;grid-template-columns:repeat(7,1fr)}
+  .cal-day{min-height:78px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding:6px 4px;position:relative;cursor:pointer;transition:background .1s}
+  .cal-day:hover{background:#F8FAFF}
+  .cal-day:nth-child(7n){border-right:none}
+  .cal-day.other-month{background:#FAFBFD}
+  .cal-day.other-month .cal-day-num{color:#C8D0DE}
+  .cal-day.today .cal-day-num{background:var(--navy);color:#fff;border-radius:50%;font-weight:800}
+  .cal-day-num{font-size:13px;font-weight:600;margin-bottom:3px;width:24px;height:24px;display:flex;align-items:center;justify-content:center}
+  .cal-event{font-size:10px;font-weight:700;padding:2px 5px;border-radius:5px;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;color:#fff;line-height:1.4}
+  .cal-event:active{opacity:.75}
+  .cal-more{font-size:9px;font-weight:700;color:var(--muted);padding-left:2px}
+  .cal-add{position:absolute;bottom:3px;right:3px;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--border);font-size:13px;line-height:1;transition:all .15s}
+  .cal-day:hover .cal-add{color:var(--navy)}
+
+  .cal-legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px;padding:10px 14px;background:#fff;border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow)}
+  .legend-item{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--label)}
+  .legend-swatch{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+
+  /* ── SERVICES LIST ── */
+  .list-toolbar{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+  .filter-wrap{flex:1;min-width:130px;position:relative}
+  .filter-wrap svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:14px;height:14px;stroke:var(--muted);fill:none;stroke-width:2;pointer-events:none}
+  .filter-select{width:100%;height:42px;border:1px solid var(--border);border-radius:10px;padding:0 10px 0 30px;font-size:13px;font-family:inherit;color:var(--text);background:#fff;appearance:none;box-shadow:var(--shadow)}
+  .filter-select:focus{outline:none;border-color:var(--navy)}
+  .btn-new{height:42px;background:var(--navy);color:#fff;border:none;border-radius:10px;padding:0 20px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;box-shadow:var(--shadow);display:flex;align-items:center;gap:6px}
+  .btn-new:active{opacity:.85}
+  .btn-new svg{width:16px;height:16px;stroke:#fff;fill:none;stroke-width:2.5}
+
+  .service-card{background:#fff;border-radius:var(--radius);border:1px solid var(--border);padding:14px 16px;margin-bottom:8px;cursor:pointer;transition:all .15s;box-shadow:var(--shadow)}
+  .service-card:active{transform:scale(.99);border-color:var(--navy)}
+  .service-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:4px}
+  .service-client{font-size:13px;font-weight:700;line-height:1.3;color:var(--text)}
+  .service-dept{font-size:12px;color:var(--muted);font-weight:500;margin-bottom:8px}
+  .service-meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+  .chip{font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px}
+  .chip-default{background:var(--bg);color:var(--label)}
+  .chip-tech{background:#EEF3FF;color:var(--navy)}
+  .chip-po{background:#FFF7ED;color:#92400E}
+  .status-pill{font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;flex-shrink:0;letter-spacing:.3px}
+  .status-draft{background:var(--amber-lt);color:#92400E}
+  .status-submitted{background:var(--green-lt);color:#065F46}
+  .chevron{width:18px;height:18px;stroke:var(--border);fill:none;stroke-width:2;flex-shrink:0;margin-top:2px}
+
+  /* ── DETAIL ── */
+  .detail-back{display:flex;align-items:center;gap:6px;color:var(--navy);font-size:14px;font-weight:700;cursor:pointer;margin-bottom:8px;padding:4px 0}
+  .detail-back svg{width:20px;height:20px;stroke:var(--navy);fill:none;stroke-width:2.5}
+
+  /* ── NOTES CARD (reused info-card) ── */
+  .info-card{background:#fff;border-radius:var(--radius);border:1px solid var(--border);padding:12px 16px;margin-bottom:10px;box-shadow:var(--shadow)}
+  .info-card-title{font-size:10px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(--muted)}
+  /* ── WINSCOPE-STYLE RECORD HEADER ── */
+  .rec-hdr{background:#fff;border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);margin-bottom:10px;overflow:hidden}
+  .rec-hdr-top{display:flex;align-items:center;gap:10px;padding:7px 12px;background:var(--navy)}
+  .rec-client{font-size:13px;font-weight:800;color:#fff;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .rec-row{display:flex;align-items:center;flex-wrap:wrap;padding:0;border-bottom:1px solid var(--border);background:#fff}
+  .rec-row:nth-child(3){background:#F8FAFD}
+  .rec-row:last-child{border-bottom:none}
+  .fi{display:flex;align-items:center;gap:0;padding:4px 12px;border-right:1px solid var(--border);white-space:nowrap}
+  .fi:last-child{border-right:none}
+  .fi-label{font-size:9px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);margin-right:5px}
+  .fi-val{font-size:12px;font-weight:600;color:var(--text)}
+  .fi-val.muted{color:var(--muted);font-weight:500;font-size:11px}
+  .fi-input{background:var(--bg);border:1px solid var(--border);border-radius:5px;padding:2px 7px;font-family:inherit;font-size:12px;font-weight:500;color:var(--text);height:25px;min-width:80px}
+  .fi-input:focus{outline:none;border-color:var(--navy);background:#fff}
+  .fi-input:disabled{opacity:.5;cursor:not-allowed}
+  .fi-grow{flex:1}
+  /* legacy – still used for Notes */
+  .info-input{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 10px;width:100%;font-family:inherit;font-size:14px;font-weight:500;color:var(--text);height:38px}
+  .info-input:focus{outline:none;border-color:var(--navy);background:#fff}
+  .info-input:disabled{opacity:.5;cursor:not-allowed}
+
+  .submitted-banner{background:var(--green-lt);border:1px solid #86efac;border-radius:10px;padding:10px 14px;margin-bottom:10px;display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:#065F46}
+  .submitted-banner svg{width:18px;height:18px;stroke:#16A34A;fill:none;stroke-width:2.5;flex-shrink:0}
+
+  /* ── TRAY CARDS ── */
+  .tray-section-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+  .tray-card{background:#fff;border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;margin-bottom:10px;box-shadow:var(--shadow)}
+  .tray-card-hdr{background:var(--navy);padding:7px 12px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}
+  .tray-chevron{width:16px;height:16px;stroke:rgba(255,255,255,.6);fill:none;stroke-width:2.5;flex-shrink:0;transition:transform .18s;margin-left:6px}
+  .tray-card.open .tray-chevron{transform:rotate(180deg)}
+  .tray-summary{color:rgba(255,255,255,.6);font-size:11px;font-weight:600;white-space:nowrap}
+  .tray-totals-strip{display:flex;align-items:center;gap:0;background:#F4F7FB;border-bottom:1px solid var(--border)}
+  .tts-cell{flex:1;text-align:center;padding:4px 4px;border-right:1px solid var(--border)}
+  .tts-cell:last-child{border-right:none}
+  .tts-label{font-size:8.5px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--muted);display:block}
+  .tts-val{font-size:12px;font-weight:800;color:var(--navy);display:block;line-height:1.2}
+  .tts-val.neg{color:var(--red)}
+  .tray-body{display:none}
+  .tray-card.open .tray-body{display:block}
+  .tray-card-hdr-name{color:#fff;font-size:12px;font-weight:800;letter-spacing:.2px}
+  .tray-card-actions{display:flex;gap:6px;align-items:center}
+  .btn-add-tray{background:#fff;color:var(--navy);border:2px dashed var(--border-dk);border-radius:8px;padding:8px 14px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit}
+  .btn-add-tray:hover{border-color:var(--navy);background:var(--bg)}
+  .btn-add-tray:disabled,.btn-add-item:disabled{opacity:.4;cursor:not-allowed}
+  .btn-add-item{background:rgba(255,255,255,.18);color:#fff;border:1px solid rgba(255,255,255,.25);border-radius:7px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit}
+  .btn-del-tray{width:26px;height:26px;border:none;background:rgba(255,255,255,.15);cursor:pointer;border-radius:6px;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.7);flex-shrink:0}
+  .btn-del-tray:hover{background:rgba(183,18,52,.5);color:#fff}
+  .btn-del-tray:disabled{opacity:.3;cursor:not-allowed}
+  .btn-del-tray svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.5}
+  /* Item table */
+  .item-table{width:100%;border-collapse:collapse}
+  .item-table th{background:#F0F4FB;font-size:9.5px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);padding:7px 5px;text-align:center;border-bottom:1px solid var(--border);white-space:nowrap}
+  .item-table th:first-child{text-align:left;padding-left:12px}
+  .item-table td{padding:7px 4px;text-align:center;border-bottom:1px solid var(--border);font-size:12px;vertical-align:middle}
+  .item-table td:first-child{text-align:left;padding-left:12px;font-weight:600;color:var(--text)}
+  .item-table td:last-child{padding-right:8px}
+  .item-table tr:last-child td{border-bottom:none}
+  .item-table tr.saving td{background:#FFFBEB}
+  .item-input{width:46px;height:34px;border:1px solid var(--border);border-radius:7px;text-align:center;font-size:13px;font-weight:700;font-family:inherit;color:var(--text);background:#fff;-moz-appearance:textfield}
+  .item-input::-webkit-inner-spin-button{-webkit-appearance:none}
+  .item-input:focus{outline:none;border-color:var(--navy);background:#F0F6FF}
+  .item-input:disabled{background:var(--bg);color:var(--muted);border-color:var(--bg)}
+  .item-nochg{font-size:13px;font-weight:800;color:var(--muted)}
+  .item-nochg.rep-neg{color:var(--red)}
+  .item-price{font-size:11px;color:var(--muted)}
+  .item-cost{font-size:12px;font-weight:800;color:var(--navy)}
+  .btn-del-item{width:24px;height:24px;border:none;background:transparent;cursor:pointer;border-radius:5px;display:flex;align-items:center;justify-content:center;color:var(--muted);margin:0 auto}
+  .btn-del-item:hover{background:var(--red-lt);color:var(--red)}
+  .btn-del-item:disabled{opacity:.3;cursor:not-allowed}
+  .btn-del-item svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.5}
+  /* Tray subtotals & visit total */
+  .tray-item-totals{display:flex;align-items:center;justify-content:space-between;border-top:2px solid var(--border);background:#F8FAFC;padding:9px 14px;flex-wrap:wrap;gap:8px}
+  .tray-totals-cells{display:flex;gap:14px}
+  .tray-tot{font-size:11px;color:var(--label);font-weight:700;text-align:center}
+  .tray-tot span{display:block;font-size:15px;font-weight:800;color:var(--navy)}
+  .tray-cost-badge{font-size:15px;font-weight:800;color:var(--navy)}
+  .tray-cost-label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;display:block;text-align:right}
+  .tray-empty{text-align:center;padding:24px;color:var(--muted);font-size:13px;font-weight:500}
+  .visit-total-bar{background:var(--navy);border-radius:12px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+  .visit-total-bar .vtl{color:rgba(255,255,255,.7);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;display:block}
+  .visit-total-bar .vtv{color:#fff;font-size:18px;font-weight:800;display:block}
+  .visit-total-bar .vts{color:rgba(255,255,255,.85);font-size:15px;font-weight:700;display:block}
+  .metrics-strip{display:flex;align-items:stretch;border:1px solid var(--border-dk);border-radius:10px;overflow:hidden;margin-bottom:12px}
+  .metrics-strip .ms-cell{flex:1;padding:10px 14px;background:#fff;text-align:center}
+  .metrics-strip .ms-cell+.ms-cell{border-left:1px solid var(--border-dk)}
+  .metrics-strip .msl{color:var(--muted);font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;display:block}
+  .metrics-strip .msv{color:var(--text);font-size:17px;font-weight:800;display:block}
+  .photo-grid{display:flex;flex-wrap:wrap;gap:8px;min-height:40px}
+  .photo-item{position:relative;width:96px;height:76px;border-radius:8px;overflow:hidden;border:1px solid var(--border-dk);cursor:pointer;flex-shrink:0}
+  .photo-item img{width:100%;height:100%;object-fit:cover;display:block}
+  .photo-del{position:absolute;top:3px;right:3px;width:20px;height:20px;border-radius:50%;background:rgba(0,0,0,.6);color:#fff;border:none;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;line-height:1;z-index:1}
+  .photo-add{width:96px;height:76px;border-radius:8px;border:2px dashed var(--border-dk);background:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:var(--muted);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.4px;flex-shrink:0}
+  .photo-add svg{stroke:var(--muted);fill:none;stroke-width:2}
+  .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.93);z-index:1000;display:flex;align-items:center;justify-content:center}
+  .lightbox img{max-width:95vw;max-height:88vh;border-radius:6px;object-fit:contain}
+  .lightbox-close{position:absolute;top:14px;right:14px;width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.15);border:none;color:#fff;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+  .lightbox-name{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.65);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:90vw}
+  /* Tray path buttons */
+  .tray-path-btn{flex:1;border:2px solid var(--border-dk);border-radius:8px;padding:10px 4px;background:#fff;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;font-family:inherit;transition:border-color .15s,background .15s}
+  .tray-path-btn span{font-size:12px;font-weight:700;color:var(--text)}
+  .tray-path-btn small{font-size:10px;color:var(--muted);text-align:center}
+  .tray-path-btn.active{border-color:var(--navy);background:#EEF2FB}
+  .tray-path-btn.disabled-path{opacity:.35;cursor:not-allowed;pointer-events:none}
+  /* Instrument picker */
+  .instr-search{width:100%;height:42px;border:1px solid var(--border);border-radius:10px;padding:0 12px;font-size:14px;font-family:inherit;margin-bottom:8px;display:block}
+  .instr-search:focus{outline:none;border-color:var(--navy)}
+  .instr-list{max-height:320px;overflow-y:auto;border:1px solid var(--border);border-radius:10px}
+  .instr-item{display:flex;justify-content:space-between;align-items:center;padding:11px 14px;border-bottom:1px solid var(--border);cursor:pointer;user-select:none}
+  .instr-item:last-child{border-bottom:none}
+  .instr-item:active,.instr-item:hover{background:#EEF3FB}
+  .instr-item-name{font-size:13px;font-weight:600;color:var(--text)}
+  .instr-item-price{font-size:13px;font-weight:700;color:var(--navy)}
+  .instr-cart-section{margin-top:10px;border-top:2px solid var(--border-dk);padding-top:8px}
+  .instr-cart-label{font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+  .cart-item{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--border)}
+  .cart-item:last-child{border-bottom:none}
+  .cart-item-name{flex:1;font-size:12px;font-weight:600;color:var(--text)}
+  .cart-count{width:64px;height:30px;border:1px solid var(--border);border-radius:6px;text-align:center;font-size:14px;font-weight:700;font-family:inherit;color:var(--navy)}
+  .cart-count:focus{outline:none;border-color:var(--navy)}
+  .cart-remove{background:none;border:none;cursor:pointer;color:var(--muted);font-size:15px;padding:0 2px;line-height:1}
+
+  /* ── NOTES ── */
+  .notes-field{width:100%;min-height:90px;border:1px solid var(--border);border-radius:10px;padding:10px 12px;font-size:14px;font-family:inherit;color:var(--text);resize:vertical;line-height:1.5}
+  .notes-field:focus{outline:none;border-color:var(--navy)}
+  .notes-field:disabled{background:var(--bg);color:var(--muted)}
+
+  /* ── ACTION BAR ── */
+  .action-bar{display:flex;gap:8px;padding:12px 0 8px;flex-wrap:wrap}
+  .btn{height:40px;border-radius:10px;padding:0 20px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;border:none;flex:1;min-width:80px;transition:opacity .15s}
+  .btn:active{opacity:.8}
+  .btn:disabled{opacity:.4;cursor:not-allowed}
+  .btn-primary{background:var(--navy);color:#fff;box-shadow:var(--shadow)}
+  .btn-secondary{background:#fff;color:var(--navy);border:1.5px solid var(--border)}
+  .btn-success{background:var(--green);color:#fff;box-shadow:var(--shadow)}
+  .btn-danger{background:var(--red);color:#fff}
+  .btn-amber{background:var(--amber);color:#fff}
+
+  /* ── MODALS ── */
+  .modal-overlay{position:fixed;inset:0;background:rgba(10,10,40,.55);z-index:100;display:none;align-items:center;justify-content:center;backdrop-filter:blur(2px);padding:20px}
+  .modal-overlay.open{display:flex}
+  .modal{background:#fff;border-radius:16px;width:100%;max-width:520px;max-height:88vh;overflow-y:auto;padding:20px 20px 24px}
+  .modal-handle{display:none}
+  .modal-title{font-size:18px;font-weight:800;margin-bottom:16px;color:var(--navy)}
+  .modal-field{margin-bottom:14px}
+  .modal-field label{font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:5px}
+  .modal-input{width:100%;height:46px;border:1.5px solid var(--border);border-radius:10px;padding:0 12px;font-size:15px;font-family:inherit;color:var(--text);background:#fff}
+  .modal-input:focus{outline:none;border-color:var(--navy)}
+  .modal-actions{display:flex;gap:8px;margin-top:20px}
+  .seg-control{display:flex;background:var(--bg);border-radius:10px;padding:3px;gap:3px}
+  .seg-btn{flex:1;height:40px;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;background:transparent;color:var(--muted);transition:all .15s}
+  .seg-btn.active{background:#fff;color:var(--navy);box-shadow:0 1px 6px rgba(0,0,0,.12)}
+
+  /* ── LOADING ── */
+  .loading{text-align:center;padding:40px;color:var(--muted)}
+  .spinner{width:28px;height:28px;border:3px solid var(--border);border-top-color:var(--navy);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 10px}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* ── SAVE INDICATOR ── */
+  .save-dot{width:7px;height:7px;border-radius:50%;background:var(--green);display:inline-block;margin-left:6px;opacity:0;transition:opacity .3s}
+  .save-dot.show{opacity:1}
+
+  /* ── TOAST ── */
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(10px);background:#1A202C;color:#fff;padding:11px 22px;border-radius:22px;font-size:13px;font-weight:700;opacity:0;transition:all .25s;z-index:200;pointer-events:none;white-space:nowrap;box-shadow:0 4px 16px rgba(0,0,0,.25)}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .toast.success{background:var(--green)}
+  .toast.error{background:var(--red)}
+
+  /* ── EMPTY ── */
+  .empty{text-align:center;padding:56px 24px;color:var(--muted)}
+  .empty svg{width:52px;height:52px;stroke:var(--border-dk);fill:none;stroke-width:1.5;margin:0 auto 14px;display:block}
+  .empty p{font-size:14px;font-weight:500}
+
+  /* ── CONFIRM MODAL ── */
+  .confirm-icon{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 12px}
+  .confirm-icon svg{width:28px;height:28px;stroke:#fff;fill:none;stroke-width:2.5}
+  .confirm-msg{text-align:center;color:var(--label);font-size:14px;line-height:1.6;margin-bottom:4px}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="topbar-logo">
+      <svg viewBox="0 0 32 32" fill="none">
+        <circle cx="16" cy="16" r="14" stroke="white" stroke-width="1.5"/>
+        <path d="M10 16 L16 10 L22 16 L16 22 Z" fill="white"/>
+        <circle cx="16" cy="16" r="3.5" fill="#00257A"/>
+      </svg>
+      <div>
+        <div class="topbar-title">TSI Site Services</div>
+        <div class="topbar-sub">FIELD TOOL</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-tech" id="currentTechPill">Charles Kaufman</div>
+    </div>
+  </div>
+
+  <!-- TAB BAR -->
+  <div class="tabbar">
+    <div class="tab active" data-view="calendar" onclick="switchView('calendar')">
+      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Calendar
+    </div>
+    <div class="tab" data-view="services" onclick="switchView('services')">
+      <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="3" cy="6" r="1" fill="currentColor"/><circle cx="3" cy="12" r="1" fill="currentColor"/><circle cx="3" cy="18" r="1" fill="currentColor"/></svg>
+      Services
+    </div>
+    <div class="tab" data-view="detail" id="detailTab" style="display:none">
+      <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      Record
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ── CALENDAR ── -->
+    <div class="view active" id="view-calendar">
+      <div class="cal-header">
+        <div class="cal-nav" onclick="prevMonth()">‹</div>
+        <div class="cal-month" id="calMonthLabel"></div>
+        <div class="cal-nav" onclick="nextMonth()">›</div>
+        <button class="cal-today-btn" onclick="goToday()">Today</button>
+      </div>
+      <div class="cal-grid">
+        <div class="cal-dow"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div>
+        <div class="cal-days" id="calDays"></div>
+      </div>
+    </div>
+
+    <!-- ── SERVICES LIST ── -->
+    <div class="view" id="view-services">
+      <div class="list-toolbar">
+        <div class="filter-wrap">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <select class="filter-select" id="filterTech" onchange="loadServices()">
+            <option value="">All Technicians</option>
+          </select>
+        </div>
+        <div class="filter-wrap">
+          <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          <select class="filter-select" id="filterStatus" onchange="loadServices()">
+            <option value="">All Status</option>
+            <option value="draft">Draft</option>
+            <option value="submitted">Submitted</option>
+          </select>
+        </div>
+        <button class="btn-new" onclick="openNewVisitModal()">
+          <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          New
+        </button>
+      </div>
+      <div id="serviceList"></div>
+    </div>
+
+    <!-- ── DETAIL ── -->
+    <div class="view" id="view-detail">
+      <div class="detail-back" onclick="switchView('services')">
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+        Back to Services
+      </div>
+      <div id="detailContent"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── MODALS ── -->
+
+<!-- Calendar Event -->
+<div class="modal-overlay" id="modalCalEvent">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="calModalTitle">Add Visit</div>
+    <div class="modal-field">
+      <label>Service Location</label>
+      <div class="seg-control" id="segLocation">
+        <button class="seg-btn active" onclick="setSeg('segLocation',this,'North')">North</button>
+        <button class="seg-btn" onclick="setSeg('segLocation',this,'South')">South</button>
+      </div>
+    </div>
+    <div class="modal-field">
+      <label>Technician</label>
+      <select class="modal-input" id="calTech"></select>
+    </div>
+    <div class="modal-field">
+      <label>Client</label>
+      <select class="modal-input" id="calClient" onchange="loadCalDepts()"></select>
+    </div>
+    <div class="modal-field">
+      <label>Department</label>
+      <select class="modal-input" id="calDept"></select>
+    </div>
+    <div class="modal-field">
+      <label>Date</label>
+      <input class="modal-input" type="date" id="calDate">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" style="flex:1" onclick="closeModal('modalCalEvent')">Cancel</button>
+      <button class="btn btn-danger" style="flex:0;padding:0 16px;display:none" id="calDeleteBtn" onclick="confirmDeleteCalEvent()">Delete</button>
+      <button class="btn btn-primary" style="flex:1" onclick="saveCalEvent()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- New Visit -->
+<div class="modal-overlay" id="modalNewVisit">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">New Visit</div>
+    <div class="modal-field">
+      <label>Technician</label>
+      <select class="modal-input" id="nvTech"></select>
+    </div>
+    <div class="modal-field">
+      <label>Client</label>
+      <select class="modal-input" id="nvClient" onchange="loadNvDepts()"></select>
+    </div>
+    <div class="modal-field">
+      <label>Department</label>
+      <select class="modal-input" id="nvDept"></select>
+    </div>
+    <div class="modal-field">
+      <label>Onsite Date</label>
+      <input class="modal-input" type="date" id="nvDate">
+    </div>
+    <div class="modal-field">
+      <label>Service Location</label>
+      <div class="seg-control" id="segNvLocation">
+        <button class="seg-btn active" onclick="setSeg('segNvLocation',this,'North')">North</button>
+        <button class="seg-btn" onclick="setSeg('segNvLocation',this,'South')">South</button>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" style="flex:1" onclick="closeModal('modalNewVisit')">Cancel</button>
+      <button class="btn btn-primary" style="flex:2" onclick="createNewVisit()">Create Visit</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Tray -->
+<div class="modal-overlay" id="modalAddTray">
+  <div class="modal" style="min-height:260px;display:flex;flex-direction:column">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Add Tray</div>
+    <!-- Path selector -->
+    <div style="display:flex;gap:8px;margin-bottom:14px">
+      <button class="tray-path-btn" id="pathBtnSaved" onclick="selectTrayPath('saved')">
+        <span style="font-size:17px">📋</span>
+        <span>Saved Tray</span>
+        <small>Load from template</small>
+      </button>
+      <button class="tray-path-btn" id="pathBtnNew" onclick="selectTrayPath('new')">
+        <span style="font-size:17px">✏️</span>
+        <span>New Tray</span>
+        <small>Build + save</small>
+      </button>
+      <button class="tray-path-btn" id="pathBtnAdhoc" onclick="selectTrayPath('adhoc')">
+        <span style="font-size:17px">🔧</span>
+        <span>Repair Bin</span>
+        <small>Ad-hoc, not saved</small>
+      </button>
+    </div>
+    <!-- Saved tray panel -->
+    <div id="addTrayPanelSaved" style="display:none;flex:1">
+      <div class="modal-field">
+        <label>Select Template</label>
+        <select class="modal-input" id="savedTraySelect" onchange="previewSavedTray(this.value)">
+          <option value="">— Choose a saved tray —</option>
+        </select>
+      </div>
+      <div id="savedTrayPreview" style="margin-top:8px;max-height:140px;overflow-y:auto;font-size:12px"></div>
+    </div>
+    <!-- New tray panel -->
+    <div id="addTrayPanelNew" style="display:none;flex:1">
+      <div class="modal-field">
+        <label>Tray Name</label>
+        <input class="modal-input" id="newTrayName" type="text" placeholder="e.g. GI Tray A" autocomplete="off">
+      </div>
+      <div style="color:var(--muted);font-size:11px;margin-top:4px">Instrument types will be saved as a template on submit</div>
+    </div>
+    <!-- Ad-hoc / Repair Bin panel -->
+    <div id="addTrayPanelAdhoc" style="display:none;flex:1">
+      <div class="modal-field">
+        <label>Tray Name</label>
+        <input class="modal-input" id="adhocTrayName" type="text" placeholder="Repair Bin" autocomplete="off">
+      </div>
+      <div style="color:var(--muted);font-size:11px;margin-top:4px">Ad-hoc trays are not saved as templates</div>
+    </div>
+    <div class="modal-actions" style="margin-top:auto;padding-top:12px">
+      <button class="btn btn-secondary" style="flex:1" onclick="closeModal('modalAddTray')">Cancel</button>
+      <button class="btn btn-primary" style="flex:2" id="btnConfirmAddTray" onclick="confirmAddTray()">Add Tray</button>
+    </div>
+  </div>
+</div>
+
+<!-- Pick Instrument Type -->
+<div class="modal-overlay" id="modalPickInstrument">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Add Instrument Types</div>
+    <input class="instr-search" id="instrSearch" type="text" placeholder="Search instrument types..." oninput="filterInstrumentList(this.value)" autocomplete="off">
+    <div class="instr-list" id="instrList"></div>
+    <div class="instr-cart-section" id="instrCartSection" style="display:none">
+      <div class="instr-cart-label">Selected — enter counts</div>
+      <div id="instrCartList"></div>
+    </div>
+    <div class="modal-actions" style="margin-top:10px">
+      <button class="btn btn-secondary" style="flex:1" onclick="closeModal('modalPickInstrument')">Cancel</button>
+      <button class="btn btn-primary" id="btnAddItems" style="flex:2;display:none" onclick="confirmAddItems()">Add Items</button>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm -->
+<div class="modal-overlay" id="modalConfirm">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="confirm-icon" id="confirmIcon"></div>
+    <div class="modal-title" id="confirmTitle" style="text-align:center"></div>
+    <div class="confirm-msg" id="confirmMsg"></div>
+    <div class="modal-actions" style="margin-top:24px">
+      <button class="btn btn-secondary" style="flex:1" onclick="closeModal('modalConfirm')">Cancel</button>
+      <button class="btn" style="flex:1" id="confirmOkBtn">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── STATE ─────────────────────────────────────────────────────────────────────
+let techs = [], clients = [], allDepts = [];
+let calEvents = [];
+let currentTechKey = 189; // Charles Kaufman — will come from Azure AD SSO
+let currentDocs = [];
+let trayTemplates = [];
+let currentTrayPath = null;
+let currentYear = 2026, currentMonth = 2;
+let currentCalEvent = null;
+let currentService = null;
+let currentTrays = [];
+let expandedTrayKey = null;
+let allInstrumentTypes = [];
+let addItemTargetTrayId = null;
+let instrCart = new Map();
+let segValues = { segLocation: 'North', segNvLocation: 'North' };
+let saveTimers = {};
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+async function init() {
+  const [techRes, clientRes, deptRes, typesRes] = await Promise.all([
+    fetch('/api/technicians').then(r => r.json()),
+    fetch('/api/clients').then(r => r.json()),
+    fetch('/api/departments').then(r => r.json()),
+    fetch('/api/instrument-types').then(r => r.json()),
+  ]);
+  techs = techRes;
+  clients = clientRes;
+  allDepts = deptRes;
+  allInstrumentTypes = typesRes;
+  populateTechDropdowns();
+  populateClientDropdowns();
+  renderCalendar();
+  renderCalLegend();
+}
+
+// ── LOOKUPS ───────────────────────────────────────────────────────────────────
+const techColor = id => {
+  const t = techs.find(t => t.TechnicianKey === id);
+  return t ? t.Color : '#888';
+};
+const techName = id => {
+  const t = techs.find(t => t.TechnicianKey === id);
+  return t ? t.TechnicianName : '—';
+};
+const clientName = id => {
+  const c = clients.find(c => c.ClientKey === id);
+  return c ? c.ClientName : '—';
+};
+
+// ── DROPDOWNS ─────────────────────────────────────────────────────────────────
+function populateTechDropdowns() {
+  const opts = techs.map(t => `<option value="${t.TechnicianKey}">${t.TechnicianName}</option>`).join('');
+  document.getElementById('filterTech').innerHTML = '<option value="">All Technicians</option>' + opts;
+  document.getElementById('filterTech').value = '189';
+  document.getElementById('calTech').innerHTML = opts;
+  document.getElementById('nvTech').innerHTML = opts;
+  document.getElementById('nvTech').value = '189';
+}
+
+function populateClientDropdowns() {
+  const opts = '<option value="">— Select Client —</option>' +
+    clients.map(c => `<option value="${c.ClientKey}">${c.ClientName}</option>`).join('');
+  document.getElementById('calClient').innerHTML = opts;
+  document.getElementById('nvClient').innerHTML = opts;
+}
+
+function loadCalDepts() {
+  const id = parseInt(document.getElementById('calClient').value);
+  const depts = allDepts.filter(d => d.ClientKey === id);
+  document.getElementById('calDept').innerHTML = depts.length
+    ? depts.map(d => `<option value="${d.DepartmentKey}">${d.DepartmentName}</option>`).join('')
+    : '<option value="">— Select Client First —</option>';
+}
+
+function loadNvDepts() {
+  const id = parseInt(document.getElementById('nvClient').value);
+  const depts = allDepts.filter(d => d.ClientKey === id);
+  document.getElementById('nvDept').innerHTML = depts.length
+    ? depts.map(d => `<option value="${d.DepartmentKey}">${d.DepartmentName}</option>`).join('')
+    : '<option value="">— Select Client First —</option>';
+}
+
+// ── VIEWS ─────────────────────────────────────────────────────────────────────
+function switchView(name) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('view-' + name).classList.add('active');
+  document.querySelector(`[data-view="${name}"]`)?.classList.add('active');
+  document.getElementById('detailTab').style.display = name === 'detail' ? 'flex' : 'none';
+  if (name === 'services') loadServices();
+  if (name !== 'detail') expandedTrayKey = null;
+}
+
+// ── CALENDAR ──────────────────────────────────────────────────────────────────
+async function renderCalendar() {
+  const month = currentMonth + 1;
+  const events = await fetch(`/api/calendar-events?month=${month}&year=${currentYear}`).then(r => r.json());
+  calEvents = events;
+
+  const names = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('calMonthLabel').textContent = `${names[currentMonth]} ${currentYear}`;
+
+  const today = new Date();
+  const startDow = new Date(currentYear, currentMonth, 1).getDay();
+  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+  const daysInPrev = new Date(currentYear, currentMonth, 0).getDate();
+
+  let html = ''; let dayCount = 1, nextCount = 1;
+  for (let i = 0; i < 42; i++) {
+    let day, isOther = false, dateStr = '';
+    if (i < startDow) { day = daysInPrev - startDow + i + 1; isOther = true; }
+    else if (dayCount > daysInMonth) { day = nextCount++; isOther = true; }
+    else {
+      day = dayCount++;
+      dateStr = `${currentYear}-${String(currentMonth+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+    }
+    const isToday = !isOther && day === today.getDate() && currentMonth === today.getMonth() && currentYear === today.getFullYear();
+    const dayEvs = isOther ? [] : calEvents.filter(e => e.EventDate === dateStr && e.TechnicianKey === currentTechKey);
+    const show = dayEvs.slice(0, 2);
+    const extra = dayEvs.length - show.length;
+
+    html += `<div class="cal-day${isOther?' other-month':''}${isToday?' today':''}" ${!isOther ? `onclick="dayClick('${dateStr}')"`:''}>`;
+    html += `<div class="cal-day-num">${day}</div>`;
+    show.forEach(ev => {
+      html += `<div class="cal-event" style="background:${techColor(ev.TechnicianKey)}" onclick="event.stopPropagation();editCalEvent(${ev.EventKey})">${shortName(ev.ClientName)}</div>`;
+    });
+    if (extra > 0) html += `<div class="cal-more">+${extra} more</div>`;
+    if (!isOther) html += `<div class="cal-add">+</div>`;
+    html += '</div>';
+  }
+  document.getElementById('calDays').innerHTML = html;
+}
+
+function renderCalLegend() {
+  document.getElementById('calLegend').innerHTML = techs.map(t =>
+    `<div class="legend-item"><div class="legend-swatch" style="background:${t.Color}"></div>${t.TechnicianName}</div>`
+  ).join('');
+}
+
+function shortName(n) {
+  return (n||'').replace(/ - [A-Z]{2}$/,'').replace('Medical Center','Med Ctr')
+    .replace('National Military Med','Mil Med').replace('Surgery Center','Surg Ctr')
+    .replace('Hospital','Hosp').substring(0, 20);
+}
+
+function prevMonth() { if(currentMonth===0){currentMonth=11;currentYear--;}else currentMonth--; renderCalendar(); }
+function nextMonth() { if(currentMonth===11){currentMonth=0;currentYear++;}else currentMonth++; renderCalendar(); }
+function goToday()   { const t=new Date();currentMonth=t.getMonth();currentYear=t.getFullYear();renderCalendar(); }
+
+function dayClick(dateStr) {
+  currentCalEvent = null;
+  document.getElementById('calModalTitle').textContent = 'Add Visit';
+  document.getElementById('calDate').value = dateStr;
+  document.getElementById('calDeleteBtn').style.display = 'none';
+  document.getElementById('calClient').value = '';
+  document.getElementById('calDept').innerHTML = '<option value="">— Select Client First —</option>';
+  openModal('modalCalEvent');
+}
+
+function editCalEvent(id) {
+  const ev = calEvents.find(e => e.EventKey === id);
+  if (!ev) return;
+  currentCalEvent = ev;
+  document.getElementById('calModalTitle').textContent = 'Edit Visit';
+  document.getElementById('calDate').value = ev.EventDate;
+  document.getElementById('calTech').value = ev.TechnicianKey;
+  document.getElementById('calClient').value = ev.ClientKey;
+  loadCalDepts();
+  setTimeout(() => {
+    const deptSel = document.getElementById('calDept');
+    const opt = Array.from(deptSel.options).find(o => o.text === ev.DepartmentName);
+    if (opt) deptSel.value = opt.value;
+  }, 50);
+  setSeg('segLocation', document.querySelector(`#segLocation .seg-btn${ev.ServiceLocation==='South'?':last-child':':first-child'}`), ev.ServiceLocation);
+  document.getElementById('calDeleteBtn').style.display = 'flex';
+  openModal('modalCalEvent');
+}
+
+async function saveCalEvent() {
+  const clientId = parseInt(document.getElementById('calClient').value);
+  if (!clientId) { showToast('Select a client', 'error'); return; }
+  const deptSel = document.getElementById('calDept');
+  const payload = {
+    ClientKey: clientId, ClientName: document.getElementById('calClient').options[document.getElementById('calClient').selectedIndex].text,
+    DepartmentKey: parseInt(deptSel.value), DepartmentName: deptSel.options[deptSel.selectedIndex]?.text || '',
+    TechnicianKey: parseInt(document.getElementById('calTech').value),
+    EventDate: document.getElementById('calDate').value,
+    ServiceLocation: segValues['segLocation'],
+  };
+  if (currentCalEvent) {
+    await fetch(`/api/calendar-events/${currentCalEvent.EventKey}`, { method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) });
+  } else {
+    await fetch('/api/calendar-events', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) });
+  }
+  closeModal('modalCalEvent');
+  renderCalendar();
+  showToast(currentCalEvent ? 'Visit updated' : 'Visit added', 'success');
+}
+
+function confirmDeleteCalEvent() {
+  showConfirm({ icon:'🗑', color:var_red, title:'Delete Visit?', msg:'This calendar entry will be removed.', btnLabel:'Delete', btnClass:'btn-danger',
+    onConfirm: async () => {
+      await fetch(`/api/calendar-events/${currentCalEvent.EventKey}`, { method:'DELETE' });
+      closeModal('modalCalEvent');
+      renderCalendar();
+      showToast('Visit deleted');
+    }
+  });
+}
+
+// ── SERVICES LIST ─────────────────────────────────────────────────────────────
+async function loadServices() {
+  const techId = document.getElementById('filterTech').value;
+  const status = document.getElementById('filterStatus').value;
+  document.getElementById('serviceList').innerHTML = `<div class="loading"><div class="spinner"></div>Loading...</div>`;
+  let url = '/api/site-services?';
+  if (techId) url += `technicianId=${techId}&`;
+  if (status) url += `status=${status}&`;
+  const list = await fetch(url).then(r => r.json());
+  list.sort((a, b) => b.OnsiteDate.localeCompare(a.OnsiteDate));
+  renderServiceList(list);
+}
+
+function renderServiceList(list) {
+  if (!list.length) {
+    document.getElementById('serviceList').innerHTML = `<div class="empty"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg><p>No services found</p></div>`;
+    return;
+  }
+  document.getElementById('serviceList').innerHTML = list.map(s => {
+    const d = new Date(s.OnsiteDate + 'T00:00:00').toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'});
+    return `<div class="service-card" onclick="openDetail(${s.SiteServiceKey})">
+      <div class="service-card-top">
+        <div class="service-client">${s.ClientName}</div>
+        <svg class="chevron" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+      <div class="service-dept">${s.DepartmentName}</div>
+      <div class="service-meta">
+        <span class="chip chip-default">${d}</span>
+        <span class="chip chip-tech">${s.TechnicianName}</span>
+        ${s.TrayCount ? `<span class="chip chip-default">${s.TrayCount} tray${s.TrayCount!==1?'s':''}</span>` : ''}
+        ${s.PurchaseOrder ? `<span class="chip chip-po">PO: ${s.PurchaseOrder}</span>` : ''}
+        <span class="status-pill status-${s.Status}">${s.Status === 'submitted' ? '✓ Submitted' : 'Draft'}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── DETAIL ────────────────────────────────────────────────────────────────────
+async function openDetail(id) {
+  switchView('detail');
+  document.getElementById('detailContent').innerHTML = `<div class="loading"><div class="spinner"></div>Loading...</div>`;
+  const [svc, trays, docs] = await Promise.all([
+    fetch(`/api/site-services/${id}`).then(r => r.json()),
+    fetch(`/api/site-services/${id}/trays`).then(r => r.json()),
+    fetch(`/api/site-services/${id}/documents`).then(r => r.json()),
+  ]);
+  currentService = svc;
+  currentTrays = trays;
+  currentDocs = docs;
+  renderDetail();
+}
+
+function renderDetail() {
+  const s = currentService;
+  const submitted = s.Status === 'submitted';
+  const d = new Date(s.OnsiteDate + 'T00:00:00').toLocaleDateString('en-US', {weekday:'long',month:'long',day:'numeric',year:'numeric'});
+  const dis = submitted ? 'disabled' : '';
+
+  let html = '';
+
+  if (submitted) {
+  }
+
+  html += `<div class="rec-hdr">
+    <div class="rec-hdr-top">
+      <span class="rec-client">${s.ClientName}</span>
+      <span class="status-pill status-${s.Status}">${submitted ? '✓ Submitted' : 'Draft'}</span>
+    </div>
+    <div class="rec-row">
+      <div class="fi"><span class="fi-label">DEPT</span><span class="fi-val">${s.DepartmentName}</span></div>
+      <div class="fi"><span class="fi-label">DATE</span><span class="fi-val">${d}</span></div>
+      <div class="fi"><span class="fi-label">TECH</span><span class="fi-val">${s.TechnicianName}</span></div>
+      <div class="fi"><span class="fi-label">TRUCK</span><span class="fi-val">${s.TruckNumber||'—'}</span></div>
+      <div class="fi"><span class="fi-label">LOCATION</span><span class="fi-val">${s.ServiceLocation}</span></div>
+      <div class="fi"><span class="fi-label">PRICE CLASS</span><span class="fi-val">${s.PriceClass||'—'}</span></div>
+      ${s.WorkOrder ? `<div class="fi"><span class="fi-label">WO</span><span class="fi-val">${s.WorkOrder}</span></div>` : ''}
+    </div>
+    <div class="rec-row">
+      <div class="fi fi-grow"><span class="fi-label">ADDRESS</span><span class="fi-val muted">${s.Address ? s.Address+', '+s.CityStateZip : '—'}</span></div>
+      <div class="fi"><span class="fi-label">PO #</span><input class="fi-input" id="d-po" type="text" value="${s.PurchaseOrder||''}" placeholder="—" ${dis}></div>
+      <div class="fi"><span class="fi-label">START</span><input class="fi-input" id="d-start" type="time" value="${s.StartTime||''}" ${dis}></div>
+      <div class="fi"><span class="fi-label">END</span><input class="fi-input" id="d-end" type="time" value="${s.EndTime||''}" ${dis}></div>
+    </div>
+  </div>`;
+
+  // Tray section
+  html += `<div class="tray-section-hdr">
+    <div style="font-size:15px;font-weight:800;color:var(--text)">Instrument Trays</div>
+  </div>`;
+
+  if (!currentTrays.length) {
+    html += `<div class="tray-card"><div class="tray-empty">${submitted ? 'No trays recorded' : 'No trays yet'}</div></div>`;
+    if (!submitted) html += `<button class="btn-add-tray" style="width:100%;margin-bottom:10px" onclick="openAddTrayModal()">+ Add Tray</button>`;
+  } else {
+    currentTrays.forEach(t => {
+      const items = t.Items || [];
+      const trayCost = items.reduce((sum, i) => sum + i.RepairedCount * i.UnitPrice, 0);
+      let totInstr=0, totRep=0, totSent=0, totBer=0, totNoChg=0;
+      items.forEach(i => {
+        const nc = i.TotalCount - i.RepairedCount - i.SentToTSICount - i.BERCount;
+        totInstr+=i.TotalCount; totRep+=i.RepairedCount; totSent+=i.SentToTSICount; totBer+=i.BERCount; totNoChg+=nc;
+      });
+      html += `<div class="tray-card" id="tcard-${t.TrayKey}">
+        <div class="tray-card-hdr" onclick="toggleTray(${t.TrayKey})">
+          <span class="tray-card-hdr-name">${t.TrayName}</span>
+          <div class="tray-card-actions" style="display:flex;align-items:center;gap:6px">
+            ${!submitted ? `<button class="btn-add-item" onclick="event.stopPropagation();openAddItemModal(${t.TrayKey})">+ Add Item</button>` : ''}
+            ${!submitted ? `<button class="btn-del-tray" onclick="event.stopPropagation();deleteTray(${t.TrayKey})" title="Remove Tray"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg></button>` : ''}
+            <svg class="tray-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+        <div class="tray-totals-strip" id="tsum-${t.TrayKey}">
+          <div class="tts-cell"><span class="tts-label">Instr</span><span class="tts-val">${totInstr}</span></div>
+          <div class="tts-cell"><span class="tts-label">Inspected</span><span class="tts-val${totNoChg<0?' neg':''}">${totNoChg}</span></div>
+          <div class="tts-cell"><span class="tts-label">Repaired</span><span class="tts-val" style="color:var(--green)">${totRep}</span></div>
+          <div class="tts-cell"><span class="tts-label">Sent TSI</span><span class="tts-val">${totSent}</span></div>
+          <div class="tts-cell"><span class="tts-label">BER</span><span class="tts-val">${totBer}</span></div>
+          <div class="tts-cell" style="flex:1.5"><span class="tts-label">Tray Total</span><span class="tts-val">$${trayCost.toFixed(2)}</span></div>
+        </div>
+        <div class="tray-body" id="tbody-${t.TrayKey}">`;
+      if (!items.length) {
+        html += `<div class="tray-empty">${submitted ? 'No items recorded' : 'No items — tap + Add Item'}</div>`;
+      } else {
+        html += `<div style="overflow-x:auto"><table class="item-table">
+          <thead><tr>
+            <th style="text-align:left;padding-left:12px;min-width:160px">Instrument Type</th>
+            <th>Total</th><th>Inspected</th><th>Repaired</th><th>Sent TSI</th><th>BER</th><th>Unit $</th><th>Cost</th>
+            ${!submitted ? '<th></th>' : ''}
+          </tr></thead><tbody>`;
+        items.forEach(item => {
+          const nc = item.TotalCount - item.RepairedCount - item.SentToTSICount - item.BERCount;
+          const ncClass = nc < 0 ? ' rep-neg' : '';
+          const rowCost = item.RepairedCount * item.UnitPrice;
+          html += `<tr id="irow-${item.ItemKey}">
+            <td>${item.InstrumentType}</td>
+            <td><input class="item-input" type="number" min="0" value="${item.TotalCount}" onchange="itemChanged(${t.TrayKey},${item.ItemKey},'TotalCount',this.value)" ${dis}></td>
+            <td><span class="item-nochg${ncClass}" id="nochg-${item.ItemKey}">${nc}</span></td>
+            <td><input class="item-input" type="number" min="0" value="${item.RepairedCount}" onchange="itemChanged(${t.TrayKey},${item.ItemKey},'RepairedCount',this.value)" ${dis}></td>
+            <td><input class="item-input" type="number" min="0" value="${item.SentToTSICount}" onchange="itemChanged(${t.TrayKey},${item.ItemKey},'SentToTSICount',this.value)" ${dis}></td>
+            <td><input class="item-input" type="number" min="0" value="${item.BERCount}" onchange="itemChanged(${t.TrayKey},${item.ItemKey},'BERCount',this.value)" ${dis}></td>
+            <td><span class="item-price">$${item.UnitPrice.toFixed(2)}</span></td>
+            <td><span class="item-cost" id="cost-${item.ItemKey}">$${rowCost.toFixed(2)}</span></td>
+            ${!submitted ? `<td><button class="btn-del-item" onclick="deleteItem(${t.TrayKey},${item.ItemKey})" title="Remove"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg></button></td>` : ''}
+          </tr>`;
+        });
+        html += `</tbody></table></div>
+        <div class="tray-item-totals">
+          <div class="tray-totals-cells" id="tbot-${t.TrayKey}">
+            <div class="tray-tot"><span>${totInstr}</span>Instr.</div>
+            <div class="tray-tot"><span style="color:${totNoChg<0?'var(--red)':'var(--muted)'}">${totNoChg}</span>Inspected</div>
+            <div class="tray-tot"><span style="color:var(--green)">${totRep}</span>Repaired</div>
+            <div class="tray-tot"><span>${totSent}</span>Sent TSI</div>
+            <div class="tray-tot"><span>${totBer}</span>BER</div>
+          </div>
+          <div style="text-align:right">
+            <span class="tray-cost-label">Tray Total</span>
+            <span class="tray-cost-badge" id="tcost-${t.TrayKey}">$${trayCost.toFixed(2)}</span>
+          </div>
+        </div>`;
+      }
+      if (!submitted) html += `<div style="padding:8px 12px;text-align:right;border-top:1px solid var(--border)"><button class="btn btn-secondary" style="height:32px;font-size:12px;padding:0 16px" onclick="toggleTray(${t.TrayKey})">✓ Done with Tray</button></div>`;
+      html += `</div></div>`;
+    });
+    if (!submitted) html += `<button class="btn-add-tray" style="width:100%;margin-bottom:10px" onclick="openAddTrayModal()">+ Add Tray</button>`;
+    const visitTotal = currentTrays.reduce((sum, t) => sum + (t.Items||[]).reduce((s, i) => s + i.RepairedCount * i.UnitPrice, 0), 0);
+    const valueDelivered = currentTrays.reduce((sum, t) => sum + (t.Items||[]).reduce((s, i) => s + (i.TotalCount - i.SentToTSICount - i.BERCount) * i.UnitPrice, 0), 0);
+    const totalInstr = currentTrays.reduce((sum, t) => sum + (t.Items||[]).reduce((s, i) => s + i.TotalCount, 0), 0);
+    const totalBER = currentTrays.reduce((sum, t) => sum + (t.Items||[]).reduce((s, i) => s + i.BERCount, 0), 0);
+    const totalSentTSI = currentTrays.reduce((sum, t) => sum + (t.Items||[]).reduce((s, i) => s + i.SentToTSICount, 0), 0);
+    const berRate = totalInstr > 0 ? (totalBER / totalInstr * 100) : 0;
+    const sentRate = totalInstr > 0 ? (totalSentTSI / totalInstr * 100) : 0;
+    html += `<div class="visit-total-bar">
+      <div>
+        <span class="vtl">Total Value Delivered</span>
+        <span class="vtv">$${valueDelivered.toFixed(2)}</span>
+      </div>
+      <div style="text-align:right">
+        <span class="vtl">Repair Cost (Billed)</span>
+        <span class="vts">$${visitTotal.toFixed(2)}</span>
+      </div>
+    </div>
+    <div class="metrics-strip">
+      <div class="ms-cell">
+        <span class="msl">BER Rate</span>
+        <span class="msv ber-rate-val">${berRate.toFixed(1)}%</span>
+      </div>
+      <div class="ms-cell">
+        <span class="msl">Sent Offsite Rate</span>
+        <span class="msv sent-rate-val">${sentRate.toFixed(1)}%</span>
+      </div>
+    </div>`;
+  }
+
+  // Documents / Photos
+  html += `<div class="info-card">
+    <div class="info-card-title" style="margin-bottom:10px;display:flex;align-items:center;justify-content:space-between">
+      <span>Documents / Photos</span>
+      ${!submitted ? `<label style="cursor:pointer;display:flex;align-items:center;gap:5px;font-size:12px;color:var(--blue);font-weight:600">
+        <svg viewBox="0 0 24 24" width="14" height="14"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        Add Photo
+        <input type="file" accept="image/*" capture="environment" multiple style="display:none" onchange="uploadPhotos(this,${s.SiteServiceKey})">
+      </label>` : ''}
+    </div>
+    <div class="photo-grid" id="photoGrid"></div>
+  </div>`;
+
+  // Notes
+  html += `<div class="info-card">
+    <div class="info-card-title" style="margin-bottom:10px">Notes / Next Steps</div>
+    <textarea class="notes-field" id="d-notes" placeholder="Enter notes..." ${dis}>${s.Notes||''}</textarea>
+  </div>`;
+
+  // Action bar
+  if (!submitted) {
+    html += `<div class="action-bar">
+      <button class="btn btn-secondary" onclick="switchView('services')">Close</button>
+      <button class="btn btn-primary" onclick="saveRecord()">Save</button>
+      <button class="btn btn-success" onclick="confirmSubmit()">Submit</button>
+    </div>`;
+  } else {
+    html += `<div class="action-bar">
+      <button class="btn btn-secondary" onclick="switchView('services')">Close</button>
+    </div>`;
+  }
+
+  document.getElementById('detailContent').innerHTML = html;
+  renderPhotos();
+  restoreExpandedTray();
+}
+
+// ── TRAY & ITEM EDITING ────────────────────────────────────────────────────────
+function toggleTray(trayKey) {
+  const card = document.getElementById('tcard-' + trayKey);
+  const isOpen = card.classList.contains('open');
+  document.querySelectorAll('.tray-card.open').forEach(c => c.classList.remove('open'));
+  if (!isOpen) { card.classList.add('open'); expandedTrayKey = trayKey; }
+  else expandedTrayKey = null;
+}
+
+function restoreExpandedTray() {
+  if (expandedTrayKey) {
+    const card = document.getElementById('tcard-' + expandedTrayKey);
+    if (card) card.classList.add('open');
+  }
+}
+
+function itemChanged(trayKey, itemKey, field, val) {
+  const tray = currentTrays.find(t => t.TrayKey === trayKey);
+  if (!tray) return;
+  const item = (tray.Items || []).find(i => i.ItemKey === itemKey);
+  if (!item) return;
+  item[field] = parseInt(val) || 0;
+
+  // Update No Chg display
+  const nc = item.TotalCount - item.RepairedCount - item.SentToTSICount - item.BERCount;
+  const ncEl = document.getElementById(`nochg-${itemKey}`);
+  if (ncEl) { ncEl.textContent = nc; ncEl.className = `item-nochg${nc < 0 ? ' rep-neg' : ''}`; }
+
+  // Update row cost display
+  const costEl = document.getElementById(`cost-${itemKey}`);
+  if (costEl) costEl.textContent = `$${(item.RepairedCount * item.UnitPrice).toFixed(2)}`;
+
+  // Update tray totals strip + cost badge
+  const items = tray.Items || [];
+  let totInstr=0, totRep=0, totSent=0, totBer=0, totNoChg=0;
+  items.forEach(i => {
+    const n = i.TotalCount - i.RepairedCount - i.SentToTSICount - i.BERCount;
+    totInstr+=i.TotalCount; totRep+=i.RepairedCount; totSent+=i.SentToTSICount; totBer+=i.BERCount; totNoChg+=n;
+  });
+  const trayCost = items.reduce((s, i) => s + i.RepairedCount * i.UnitPrice, 0);
+  const tcostEl = document.getElementById(`tcost-${trayKey}`);
+  if (tcostEl) tcostEl.textContent = `$${trayCost.toFixed(2)}`;
+  const sv = document.querySelectorAll(`#tsum-${trayKey} .tts-val`);
+  if (sv.length >= 6) {
+    sv[0].textContent = totInstr;
+    sv[1].textContent = totNoChg; sv[1].className = `tts-val${totNoChg < 0 ? ' neg' : ''}`;
+    sv[2].textContent = totRep;
+    sv[3].textContent = totSent;
+    sv[4].textContent = totBer;
+    sv[5].textContent = `$${trayCost.toFixed(2)}`;
+  }
+  const bc = document.querySelectorAll(`#tbot-${trayKey} .tray-tot span`);
+  if (bc.length >= 5) {
+    bc[0].textContent = totInstr;
+    bc[1].textContent = totNoChg; bc[1].style.color = totNoChg < 0 ? 'var(--red)' : 'var(--muted)';
+    bc[2].textContent = totRep;
+    bc[3].textContent = totSent;
+    bc[4].textContent = totBer;
+  }
+  // Update visit total
+  const visitTotal = currentTrays.reduce((sum, t) => sum + (t.Items||[]).reduce((s, i) => s + i.RepairedCount * i.UnitPrice, 0), 0);
+  const valueDelivered = currentTrays.reduce((sum, t) => sum + (t.Items||[]).reduce((s, i) => s + (i.TotalCount - i.SentToTSICount - i.BERCount) * i.UnitPrice, 0), 0);
+  const vtvEl = document.querySelector('.visit-total-bar .vtv');
+  if (vtvEl) vtvEl.textContent = `$${valueDelivered.toFixed(2)}`;
+  const vtsEl = document.querySelector('.visit-total-bar .vts');
+  if (vtsEl) vtsEl.textContent = `$${visitTotal.toFixed(2)}`;
+  const totalInstr = currentTrays.reduce((sum, t) => sum + (t.Items||[]).reduce((s, i) => s + i.TotalCount, 0), 0);
+  const totalBER = currentTrays.reduce((sum, t) => sum + (t.Items||[]).reduce((s, i) => s + i.BERCount, 0), 0);
+  const totalSentTSI = currentTrays.reduce((sum, t) => sum + (t.Items||[]).reduce((s, i) => s + i.SentToTSICount, 0), 0);
+  const berRateEl = document.querySelector('.ber-rate-val');
+  if (berRateEl && totalInstr > 0) berRateEl.textContent = (totalBER / totalInstr * 100).toFixed(1) + '%';
+  const sentRateEl = document.querySelector('.sent-rate-val');
+  if (sentRateEl && totalInstr > 0) sentRateEl.textContent = (totalSentTSI / totalInstr * 100).toFixed(1) + '%';
+
+  // Debounced PATCH
+  const timer = `item-${itemKey}`;
+  clearTimeout(saveTimers[timer]);
+  const row = document.getElementById(`irow-${itemKey}`);
+  if (row) row.classList.add('saving');
+  saveTimers[timer] = setTimeout(async () => {
+    await fetch(`/api/site-services/${currentService.SiteServiceKey}/trays/${trayKey}/items/${itemKey}`, {
+      method: 'PATCH', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ TotalCount: item.TotalCount, RepairedCount: item.RepairedCount, SentToTSICount: item.SentToTSICount, BERCount: item.BERCount })
+    });
+    if (row) row.classList.remove('saving');
+  }, 600);
+}
+
+async function openAddTrayModal() {
+  currentTrayPath = null;
+  // Reset UI
+  ['pathBtnSaved','pathBtnNew','pathBtnAdhoc'].forEach(id => {
+    const el = document.getElementById(id);
+    el.classList.remove('active','disabled-path');
+  });
+  ['addTrayPanelSaved','addTrayPanelNew','addTrayPanelAdhoc'].forEach(id => {
+    document.getElementById(id).style.display = 'none';
+  });
+  document.getElementById('newTrayName').value = '';
+  document.getElementById('adhocTrayName').value = '';
+  document.getElementById('savedTraySelect').innerHTML = '<option value="">— Choose a saved tray —</option>';
+  document.getElementById('savedTrayPreview').innerHTML = '';
+  document.getElementById('btnConfirmAddTray').disabled = true;
+
+  // Fetch templates for this client+dept
+  const s = currentService;
+  const templates = await fetch(`/api/tray-templates?clientId=${s.ClientKey}&deptId=${s.DepartmentKey}`).then(r => r.json());
+  trayTemplates = templates;
+
+  // Disable "Saved Tray" if no templates exist
+  if (!templates.length) {
+    document.getElementById('pathBtnSaved').classList.add('disabled-path');
+  }
+
+  // Populate template select
+  const sel = document.getElementById('savedTraySelect');
+  templates.forEach(t => {
+    const opt = document.createElement('option');
+    opt.value = t.TemplateKey;
+    opt.textContent = t.TrayName;
+    sel.appendChild(opt);
+  });
+
+  openModal('modalAddTray');
+  // Auto-select "New Tray" when no templates; "Saved Tray" when templates exist
+  selectTrayPath(templates.length ? 'saved' : 'new');
+}
+
+function selectTrayPath(path) {
+  currentTrayPath = path;
+  ['pathBtnSaved','pathBtnNew','pathBtnAdhoc'].forEach(id => document.getElementById(id).classList.remove('active'));
+  ['addTrayPanelSaved','addTrayPanelNew','addTrayPanelAdhoc'].forEach(id => {
+    document.getElementById(id).style.display = 'none';
+  });
+  const map = { saved: ['pathBtnSaved','addTrayPanelSaved'], new: ['pathBtnNew','addTrayPanelNew'], adhoc: ['pathBtnAdhoc','addTrayPanelAdhoc'] };
+  if (map[path]) {
+    document.getElementById(map[path][0]).classList.add('active');
+    document.getElementById(map[path][1]).style.display = 'block';
+  }
+  // "Add Tray" button: enabled unless on saved path and nothing selected yet
+  const sel = document.getElementById('savedTraySelect');
+  document.getElementById('btnConfirmAddTray').disabled = (path === 'saved' && !sel.value);
+  if (path === 'new')   setTimeout(() => document.getElementById('newTrayName').focus(), 120);
+  if (path === 'adhoc') setTimeout(() => document.getElementById('adhocTrayName').focus(), 120);
+}
+
+function previewSavedTray(key) {
+  const btn = document.getElementById('btnConfirmAddTray');
+  if (!key) { btn.disabled = true; document.getElementById('savedTrayPreview').innerHTML = ''; return; }
+  const tmpl = trayTemplates.find(t => t.TemplateKey === parseInt(key));
+  if (!tmpl) return;
+  document.getElementById('savedTrayPreview').innerHTML =
+    `<div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--muted);margin-bottom:4px;letter-spacing:.5px">Template Items</div>` +
+    tmpl.Items.map(i =>
+      `<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:12px;border-bottom:1px solid var(--border)">
+        <span style="color:var(--text)">${i.InstrumentType}</span>
+        <span style="color:var(--muted);font-weight:700">${i.DefaultCount}</span>
+      </div>`
+    ).join('');
+  btn.disabled = false;
+}
+
+async function confirmAddTray() {
+  let trayName, templateKey = null, adHoc = false;
+  if (currentTrayPath === 'saved') {
+    const sel = document.getElementById('savedTraySelect');
+    if (!sel.value) { showToast('Select a template', 'error'); return; }
+    const tmpl = trayTemplates.find(t => t.TemplateKey === parseInt(sel.value));
+    trayName    = tmpl.TrayName;
+    templateKey = tmpl.TemplateKey;
+  } else if (currentTrayPath === 'new') {
+    trayName = document.getElementById('newTrayName').value.trim();
+    if (!trayName) { showToast('Enter a tray name', 'error'); return; }
+  } else if (currentTrayPath === 'adhoc') {
+    trayName = document.getElementById('adhocTrayName').value.trim() || 'Repair Bin';
+    adHoc    = true;
+  } else {
+    showToast('Select a tray type', 'error'); return;
+  }
+
+  const body = { TrayName: trayName, AdHoc: adHoc };
+  if (templateKey) body.TemplateKey = templateKey;
+
+  const res = await fetch(`/api/site-services/${currentService.SiteServiceKey}/trays`, {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify(body),
+  });
+  const newTray = await res.json();
+  currentTrays.push(newTray);
+  expandedTrayKey = newTray.TrayKey;
+  closeModal('modalAddTray');
+  renderDetail();
+  // Open instrument picker for new / ad-hoc trays (saved template already has items)
+  if (currentTrayPath !== 'saved') openAddItemModal(newTray.TrayKey);
+}
+
+function deleteTray(trayId) {
+  const tray = currentTrays.find(t => t.TrayKey === trayId);
+  showConfirm({ icon:'🗑', color:var_red, title:'Remove Tray?', msg:`Remove "${tray?.TrayName||'this tray'}" and all its items?`, btnLabel:'Remove', btnClass:'btn-danger',
+    onConfirm: async () => {
+      await fetch(`/api/site-services/${currentService.SiteServiceKey}/trays/${trayId}`, { method: 'DELETE' });
+      currentTrays = currentTrays.filter(t => t.TrayKey !== trayId);
+      renderDetail();
+      showToast('Tray removed');
+    }
+  });
+}
+
+function openAddItemModal(trayId) {
+  addItemTargetTrayId = trayId;
+  instrCart = new Map();
+  document.getElementById('instrSearch').value = '';
+  renderInstrumentList('');
+  renderInstrumentCart();
+  openModal('modalPickInstrument');
+  setTimeout(() => document.getElementById('instrSearch').focus(), 120);
+}
+
+function filterInstrumentList(query) { renderInstrumentList(query); }
+
+function renderInstrumentList(query) {
+  const q = (query || '').trim().toLowerCase();
+  const tray = currentTrays.find(t => t.TrayKey === addItemTargetTrayId);
+  const usedCodes = new Set((tray?.Items || []).map(i => i.InstrumentType));
+  const filtered = allInstrumentTypes.filter(t => !usedCodes.has(t.Code) && !instrCart.has(t.Code) && (!q || t.Code.toLowerCase().includes(q)));
+  document.getElementById('instrList').innerHTML = filtered.length
+    ? filtered.map(t => `<div class="instr-item" onclick="addToCart('${t.Code.replace(/'/g,"\\'")}',${t.Price})"><span class="instr-item-name">${t.Code}</span><span class="instr-item-price">$${t.Price.toFixed(2)}</span></div>`).join('')
+    : `<div class="tray-empty">No matches</div>`;
+}
+
+function addToCart(code, price) {
+  instrCart.set(code, { price, count: 0 });
+  renderInstrumentCart();
+  renderInstrumentList(document.getElementById('instrSearch').value);
+  // focus the new count input
+  setTimeout(() => {
+    const inputs = document.querySelectorAll('.cart-count');
+    if (inputs.length) inputs[inputs.length - 1].focus();
+  }, 50);
+}
+
+function removeFromCart(code) {
+  instrCart.delete(code);
+  renderInstrumentCart();
+  renderInstrumentList(document.getElementById('instrSearch').value);
+}
+
+function setCartCount(code, val) {
+  if (instrCart.has(code)) instrCart.get(code).count = parseInt(val) || 0;
+}
+
+function renderInstrumentCart() {
+  const section = document.getElementById('instrCartSection');
+  const list = document.getElementById('instrCartList');
+  const btn = document.getElementById('btnAddItems');
+  if (!instrCart.size) {
+    section.style.display = 'none';
+    btn.style.display = 'none';
+    return;
+  }
+  section.style.display = 'block';
+  btn.style.display = '';
+  btn.textContent = `Add ${instrCart.size} Item${instrCart.size !== 1 ? 's' : ''}`;
+  list.innerHTML = [...instrCart.entries()].map(([code, {price, count}]) => `
+    <div class="cart-item">
+      <span class="cart-item-name">${code}</span>
+      <input class="cart-count" type="number" min="0" value="${count}"
+        onchange="setCartCount('${code.replace(/'/g,"\\'")}',this.value)"
+        onclick="this.select()">
+      <button class="cart-remove" onclick="removeFromCart('${code.replace(/'/g,"\\'")}')">✕</button>
+    </div>`).join('');
+}
+
+async function confirmAddItems() {
+  if (!instrCart.size) return;
+  const trayId = addItemTargetTrayId;
+  const snap = new Map(instrCart);
+  closeModal('modalPickInstrument');
+  const tray = currentTrays.find(t => t.TrayKey === trayId);
+  for (const [code, {price, count}] of snap) {
+    const res = await fetch(`/api/site-services/${currentService.SiteServiceKey}/trays/${trayId}/items`, {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ InstrumentType: code, UnitPrice: price, TotalCount: count })
+    });
+    const newItem = await res.json();
+    if (tray) { if (!tray.Items) tray.Items = []; tray.Items.push(newItem); }
+  }
+  expandedTrayKey = trayId;
+  renderDetail();
+  showToast(`${snap.size} item${snap.size !== 1 ? 's' : ''} added`, 'success');
+}
+
+function deleteItem(trayKey, itemKey) {
+  const tray = currentTrays.find(t => t.TrayKey === trayKey);
+  const item = (tray?.Items || []).find(i => i.ItemKey === itemKey);
+  showConfirm({ icon:'🗑', color:var_red, title:'Remove Item?', msg:`Remove "${item?.InstrumentType||'this item'}" from the tray?`, btnLabel:'Remove', btnClass:'btn-danger',
+    onConfirm: async () => {
+      await fetch(`/api/site-services/${currentService.SiteServiceKey}/trays/${trayKey}/items/${itemKey}`, { method: 'DELETE' });
+      if (tray) tray.Items = tray.Items.filter(i => i.ItemKey !== itemKey);
+      renderDetail();
+      showToast('Item removed');
+    }
+  });
+}
+
+// ── RECORD SAVE / SUBMIT ──────────────────────────────────────────────────────
+async function saveRecord() {
+  const payload = {
+    PurchaseOrder: document.getElementById('d-po')?.value || '',
+    StartTime: document.getElementById('d-start')?.value || '',
+    EndTime: document.getElementById('d-end')?.value || '',
+    Notes: document.getElementById('d-notes')?.value || '',
+  };
+  await fetch(`/api/site-services/${currentService.SiteServiceKey}`, {
+    method: 'PATCH', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload)
+  });
+  Object.assign(currentService, payload);
+  showToast('Saved', 'success');
+}
+
+// ── DOCUMENTS / PHOTOS ────────────────────────────────────────────────────────
+function renderPhotos() {
+  const grid = document.getElementById('photoGrid');
+  if (!grid) return;
+  const submitted = currentService?.Status === 'submitted';
+  if (!currentDocs.length) {
+    grid.innerHTML = `<div style="color:var(--muted);font-size:12px;padding:2px 0">No photos yet.</div>`;
+    return;
+  }
+  grid.innerHTML = currentDocs.map(doc => `
+    <div class="photo-item" onclick="viewPhoto(${doc.DocKey})">
+      <img src="/api/site-services/${doc.SiteServiceKey}/documents/${doc.DocKey}/data" alt="${doc.FileName}" loading="lazy">
+      ${!submitted ? `<button class="photo-del" onclick="event.stopPropagation();deletePhoto(${doc.DocKey})" title="Remove">×</button>` : ''}
+    </div>
+  `).join('');
+}
+
+async function uploadPhotos(input, svcId) {
+  const files = Array.from(input.files);
+  if (!files.length) return;
+  for (const file of files) {
+    const dataUrl = await new Promise(resolve => {
+      const reader = new FileReader();
+      reader.onload = e => resolve(e.target.result);
+      reader.readAsDataURL(file);
+    });
+    const res = await fetch(`/api/site-services/${svcId}/documents`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ FileName: file.name, MimeType: file.type, DataUrl: dataUrl, TechKey: currentTechKey }),
+    });
+    const doc = await res.json();
+    currentDocs.push({ ...doc, SiteServiceKey: svcId });
+  }
+  input.value = '';
+  renderPhotos();
+}
+
+async function deletePhoto(docId) {
+  await fetch(`/api/site-services/${currentService.SiteServiceKey}/documents/${docId}`, { method: 'DELETE' });
+  currentDocs = currentDocs.filter(d => d.DocKey !== docId);
+  renderPhotos();
+}
+
+function viewPhoto(docId) {
+  const doc = currentDocs.find(d => d.DocKey === docId);
+  if (!doc) return;
+  const lb = document.createElement('div');
+  lb.className = 'lightbox';
+  lb.innerHTML = `
+    <img src="/api/site-services/${doc.SiteServiceKey}/documents/${doc.DocKey}/data" alt="${doc.FileName}">
+    <button class="lightbox-close" onclick="this.parentElement.remove()">×</button>
+    <div class="lightbox-name">${doc.FileName}</div>
+  `;
+  lb.onclick = e => { if (e.target === lb) lb.remove(); };
+  document.body.appendChild(lb);
+}
+
+// Upsert tray templates for all non-AdHoc trays in the current service.
+// Called automatically on submit so templates stay current with each visit.
+async function syncTemplatesOnSubmit() {
+  const s = currentService;
+  const existing = await fetch(`/api/tray-templates?clientId=${s.ClientKey}&deptId=${s.DepartmentKey}`).then(r => r.json());
+  for (const tray of currentTrays) {
+    if (tray.AdHoc) continue;
+    const items = (tray.Items || []).map(i => ({
+      InstrumentType: i.InstrumentType,
+      UnitPrice:      i.UnitPrice,
+      DefaultCount:   i.TotalCount,
+    }));
+    const match = existing.find(t => t.TrayName.toLowerCase() === tray.TrayName.toLowerCase());
+    if (match) {
+      await fetch(`/api/tray-templates/${match.TemplateKey}`, {
+        method: 'PUT', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ Items: items }),
+      });
+    } else {
+      await fetch('/api/tray-templates', {
+        method: 'POST', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ ClientKey: s.ClientKey, DepartmentKey: s.DepartmentKey, TrayName: tray.TrayName, Items: items }),
+      });
+    }
+  }
+}
+
+function confirmSubmit() {
+  showConfirm({ icon:'✓', color:var_green, title:'Submit Service?', msg:'Once submitted, this record cannot be edited.', btnLabel:'Submit', btnClass:'btn-success',
+    onConfirm: async () => {
+      await saveRecord();
+      await syncTemplatesOnSubmit();
+      await fetch(`/api/site-services/${currentService.SiteServiceKey}`, {
+        method: 'PATCH', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ Status: 'submitted', DateSubmitted: new Date().toISOString().split('T')[0] })
+      });
+      currentService.Status = 'submitted';
+      currentService.DateSubmitted = new Date().toISOString().split('T')[0];
+      renderDetail();
+      showToast('Service submitted!', 'success');
+    }
+  });
+}
+
+// ── NEW VISIT ─────────────────────────────────────────────────────────────────
+function openNewVisitModal() {
+  document.getElementById('nvClient').value = '';
+  document.getElementById('nvDept').innerHTML = '<option value="">— Select Client First —</option>';
+  document.getElementById('nvDate').value = new Date().toISOString().split('T')[0];
+  openModal('modalNewVisit');
+}
+
+async function createNewVisit() {
+  const clientSel = document.getElementById('nvClient');
+  const deptSel = document.getElementById('nvDept');
+  const techId = parseInt(document.getElementById('nvTech').value);
+  if (!clientSel.value) { showToast('Select a client', 'error'); return; }
+  if (!deptSel.value)   { showToast('Select a department', 'error'); return; }
+  const client = clients.find(c => c.ClientKey === parseInt(clientSel.value));
+  const dept = allDepts.find(d => d.DepartmentKey === parseInt(deptSel.value));
+  const tech = techs.find(t => t.TechnicianKey === techId);
+  const payload = {
+    ClientKey: client.ClientKey, ClientName: client.ClientName,
+    Address: client.Address || '', CityStateZip: client.CityStateZip || '',
+    DepartmentKey: dept.DepartmentKey, DepartmentName: dept.DepartmentName,
+    TechnicianKey: techId, TechnicianName: tech?.TechnicianName || '',
+    OnsiteDate: document.getElementById('nvDate').value,
+    ServiceLocation: segValues['segNvLocation'],
+    Status: 'draft', TrayCount: 0, PurchaseOrder: '', Notes: '',
+    PriceClass: 'Standard Onsite Service',
+  };
+  const res = await fetch('/api/site-services', {
+    method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload)
+  });
+  const newSvc = await res.json();
+  closeModal('modalNewVisit');
+  showToast('Visit created', 'success');
+  currentService = newSvc;
+  currentTrays = [];
+  renderDetail();
+  switchView('detail');
+}
+
+// ── MODALS ────────────────────────────────────────────────────────────────────
+function openModal(id)  { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+function setSeg(containerId, btn, val) {
+  segValues[containerId] = val;
+  document.getElementById(containerId).querySelectorAll('.seg-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+const var_red   = '#B71234';
+const var_green = '#16A34A';
+
+function showConfirm({ icon, color, title, msg, btnLabel, btnClass, onConfirm }) {
+  document.getElementById('confirmIcon').style.background = color;
+  document.getElementById('confirmIcon').innerHTML = `<svg viewBox="0 0 24 24"><text y="20" font-size="18" fill="white">${icon}</text></svg>`;
+  document.getElementById('confirmTitle').textContent = title;
+  document.getElementById('confirmMsg').textContent = msg;
+  const btn = document.getElementById('confirmOkBtn');
+  btn.textContent = btnLabel;
+  btn.className = 'btn ' + btnClass;
+  btn.onclick = () => { closeModal('modalConfirm'); onConfirm(); };
+  openModal('modalConfirm');
+}
+
+// ── TOAST ─────────────────────────────────────────────────────────────────────
+let toastTimer;
+function showToast(msg, type = '') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast ${type} show`;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+// ── BOOT ──────────────────────────────────────────────────────────────────────
+init();
+</script>
+</body>
+</html>
