@@ -1178,8 +1178,18 @@ function itemChanged(trayKey, itemKey, field, val) {
   const vtsEl = document.querySelector('.visit-total-bar .vts');
   if (vtsEl) vtsEl.textContent = `$${visitTotal.toFixed(2)}`;
   const totalInstr = currentTrays.reduce((sum, t) => sum + (t.Items||[]).reduce((s, i) => s + i.TotalCount, 0), 0);
+  const totalRepaired = currentTrays.reduce((sum, t) => sum + (t.Items||[]).reduce((s, i) => s + i.RepairedCount, 0), 0);
   const totalBER = currentTrays.reduce((sum, t) => sum + (t.Items||[]).reduce((s, i) => s + i.BERCount, 0), 0);
   const totalSentTSI = currentTrays.reduce((sum, t) => sum + (t.Items||[]).reduce((s, i) => s + i.SentToTSICount, 0), 0);
+  const totalInspected = Math.max(0, totalInstr - totalRepaired - totalSentTSI - totalBER);
+  const vssVals = document.querySelectorAll('.visit-summary-strip .vss-val');
+  if (vssVals.length >= 5) {
+    vssVals[0].textContent = totalInstr;
+    vssVals[1].textContent = totalInspected;
+    vssVals[2].textContent = totalRepaired;
+    vssVals[3].textContent = totalBER;
+    vssVals[4].textContent = totalSentTSI;
+  }
   const berRateEl = document.querySelector('.ber-rate-val');
   if (berRateEl && totalInstr > 0) berRateEl.textContent = (totalBER / totalInstr * 100).toFixed(1) + '%';
   const sentRateEl = document.querySelector('.sent-rate-val');
