@@ -1522,40 +1522,49 @@ function viewServiceReport() {
 // ── CSV EXPORT ───────────────────────────────────────────────────────────────
 function exportCSV() {
   if (!currentService || !currentTrays.length) { showToast('No tray data to export', 'error'); return; }
-  const rows = [['Tray', 'Instrument Type', 'Total', 'Inspected', 'Repaired & Inspected', 'Sent to TSI', 'BER', 'Unit Price', 'Line Total']];
-  currentTrays.forEach(t => {
-    (t.Items || []).forEach(item => {
-      const inspected = Math.max(0, item.TotalCount - item.RepairedCount - item.SentToTSICount - item.BERCount);
-      const lineCost = item.RepairedCount * item.UnitPrice;
-      rows.push([
-        `"${t.TrayName}"`, `"${item.InstrumentType}"`, item.TotalCount, inspected,
-        item.RepairedCount, item.SentToTSICount, item.BERCount,
-        item.UnitPrice.toFixed(2), lineCost.toFixed(2)
-      ]);
-    });
-  });
-  // Summary row
+  const s = currentService;
+  const d = s.OnsiteDate ? new Date(s.OnsiteDate + 'T00:00:00').toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'}) : '';
+  const q = v => `"${String(v).replace(/"/g,'""')}"`;
+  const rows = [];
+
+  // Service header block
+  rows.push([q('Work Order'), q(s.WorkOrderNumber || '')]);
+  rows.push([q('Client'), q(s.ClientName)]);
+  rows.push([q('Department'), q(s.DepartmentName)]);
+  rows.push([q('Date'), q(d)]);
+  rows.push([q('Technician'), q(s.TechnicianName)]);
+  if (s.PurchaseOrder) rows.push([q('PO#'), q(s.PurchaseOrder)]);
+  rows.push([]);
+
+  // Column header
+  const cols = ['Instrument Type', 'Total', 'Inspected', 'Repaired & Inspected', 'Sent to TSI', 'BER', 'Unit Price', 'Line Total'];
   let totInstr=0, totInsp=0, totRep=0, totSent=0, totBer=0, totCost=0;
-  currentTrays.forEach(t => (t.Items||[]).forEach(i => {
-    totInstr+=i.TotalCount; totRep+=i.RepairedCount; totSent+=i.SentToTSICount; totBer+=i.BERCount;
-    totCost+=i.RepairedCount*i.UnitPrice;
-  }));
-  totInsp = Math.max(0, totInstr - totRep - totSent - totBer);
-  rows.push([]);
-  rows.push(['"TOTALS"', '', totInstr, totInsp, totRep, totSent, totBer, '', totCost.toFixed(2)]);
-  rows.push([]);
-  rows.push(['"Client"', `"${currentService.ClientName}"`]);
-  rows.push(['"Department"', `"${currentService.DepartmentName}"`]);
-  rows.push(['"Technician"', `"${currentService.TechnicianName}"`]);
-  rows.push(['"Date"', `"${currentService.OnsiteDate}"`]);
-  rows.push(['"Work Order"', `"${currentService.WorkOrderNumber || ''}"`]);
+
+  // One section per tray
+  currentTrays.forEach((t, idx) => {
+    const items = t.Items || [];
+    rows.push([q(`TRAY ${idx + 1}: ${t.TrayName}`), ...cols.map(c => q(c))]);
+    let tInstr=0, tInsp=0, tRep=0, tSent=0, tBer=0, tCost=0;
+    items.forEach(item => {
+      const insp = Math.max(0, item.TotalCount - item.RepairedCount - item.SentToTSICount - item.BERCount);
+      const line = item.RepairedCount * item.UnitPrice;
+      rows.push(['', q(item.InstrumentType), item.TotalCount, insp, item.RepairedCount, item.SentToTSICount, item.BERCount, item.UnitPrice.toFixed(2), line.toFixed(2)]);
+      tInstr+=item.TotalCount; tInsp+=insp; tRep+=item.RepairedCount; tSent+=item.SentToTSICount; tBer+=item.BERCount; tCost+=line;
+    });
+    rows.push([q('Tray Subtotal'), '', tInstr, tInsp, tRep, tSent, tBer, '', tCost.toFixed(2)]);
+    rows.push([]);
+    totInstr+=tInstr; totInsp+=tInsp; totRep+=tRep; totSent+=tSent; totBer+=tBer; totCost+=tCost;
+  });
+
+  // Overall totals
+  rows.push([q('VISIT TOTALS'), '', totInstr, totInsp, totRep, totSent, totBer, '', totCost.toFixed(2)]);
 
   const csv = rows.map(r => r.join(',')).join('\n');
   const blob = new Blob([csv], { type: 'text/csv' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `SiteService_${currentService.ClientName.replace(/[^a-zA-Z0-9]/g,'_')}_${currentService.OnsiteDate}.csv`;
+  a.download = `SiteService_${s.ClientName.replace(/[^a-zA-Z0-9]/g,'_')}_${s.OnsiteDate}.csv`;
   a.click();
   URL.revokeObjectURL(url);
   showToast('CSV exported', 'success');
