@@ -84,52 +84,113 @@ const siteServices = [
 ];
 
 const instrumentTypes = [
-  { Code: 'Adson Forceps',                   Price:  4.75 }, { Code: 'Allis Clamp',                    Price:  5.20 },
-  { Code: 'Allis Tissue Forceps',            Price:  5.20 }, { Code: 'Army-Navy Retractor',             Price:  6.40 },
-  { Code: 'Babcock Forceps',                 Price:  5.50 }, { Code: 'Backhaus Towel Clip',             Price:  3.10 },
-  { Code: 'Bard-Parker Handle #3',           Price:  4.25 }, { Code: 'Bard-Parker Handle #4',           Price:  4.25 },
-  { Code: 'Baum Curette',                    Price:  7.80 }, { Code: 'Bishop-Harmon Forceps',           Price:  8.40 },
-  { Code: 'Bone Rongeur',                    Price: 18.50 }, { Code: 'Brown-Adson Forceps',             Price:  5.10 },
-  { Code: 'Castroviejo Needle Holder',       Price: 22.00 }, { Code: 'Castroviejo Scissors',            Price: 28.50 },
-  { Code: 'Crile Hemostat - Curved',         Price:  4.20 }, { Code: 'Crile Hemostat - Straight',       Price:  4.20 },
-  { Code: 'Curved Mayo Scissors',            Price:  7.50 }, { Code: 'Curved Metzenbaum Scissors',      Price:  9.20 },
-  { Code: 'DeBakey Forceps - 6"',            Price:  6.80 }, { Code: 'DeBakey Forceps - 8"',            Price:  7.40 },
-  { Code: 'Deaver Retractor',                Price:  9.50 }, { Code: 'Dressing Forceps',                Price:  3.80 },
-  { Code: 'Duct Bill Rongeur',               Price: 20.00 }, { Code: 'Duval Lung Forceps',              Price:  6.90 },
-  { Code: 'Ear Curette',                     Price:  5.50 }, { Code: 'Eye Speculum',                    Price: 14.20 },
-  { Code: 'Farabeuf Retractor',              Price:  7.20 }, { Code: 'Ferguson Gallstone Forceps',      Price:  7.80 },
-  { Code: 'Fine Point Scissors',             Price:  8.60 }, { Code: 'Foerster Sponge Forceps',         Price:  5.60 },
-  { Code: 'Frazier Suction Tip',             Price:  4.50 }, { Code: 'Gelpi Retractor',                 Price: 12.50 },
-  { Code: 'Gerald Forceps',                  Price:  6.30 }, { Code: 'Halsted Mosquito - Curved',       Price:  3.60 },
-  { Code: 'Halsted Mosquito - Straight',     Price:  3.60 }, { Code: 'Harrington Retractor',            Price: 11.00 },
-  { Code: 'Hegar Dilator',                   Price:  6.20 }, { Code: 'Hemoclip Applier',                Price: 18.00 },
-  { Code: 'Iowa Trumpet',                    Price:  8.90 }, { Code: 'Jacobson Needle Holder',          Price: 16.50 },
-  { Code: 'Jansen Rongeur',                  Price: 22.00 }, { Code: 'Kelly Hemostat - Curved',         Price:  4.40 },
-  { Code: 'Kelly Hemostat - Straight',       Price:  4.40 }, { Code: 'Kern Bone Holding Forceps',       Price: 15.00 },
-  { Code: 'Kerrison Rongeur',                Price: 25.00 }, { Code: 'Kocher Hemostat',                 Price:  4.80 },
-  { Code: 'Laparoscopic Grasper',            Price: 32.00 }, { Code: 'Laparoscopic Scissors',           Price: 35.00 },
-  { Code: 'Laser Probe',                     Price: 45.00 }, { Code: 'Liston Bone Cutting Forceps',     Price: 28.00 },
-  { Code: 'Luer Rongeur',                    Price: 20.00 }, { Code: 'Lung Tissue Forceps',             Price:  8.50 },
-  { Code: 'Mayo Scissors - Straight',        Price:  7.50 }, { Code: 'Mayo-Hegar Needle Holder',        Price:  8.86 },
-  { Code: 'Metzenbaum Scissors - Straight',  Price:  9.20 }, { Code: 'Micro Scissors',                  Price: 38.00 },
-  { Code: 'Microforceps',                    Price: 42.00 }, { Code: 'Mixter Right Angle Forceps',      Price:  6.50 },
-  { Code: 'Murphy Gallbladder Trocar',       Price: 14.00 }, { Code: 'Needle Holder - 6"',              Price:  8.86 },
-  { Code: 'Needle Holder - 7"',             Price:  9.40 }, { Code: 'Obwegeser Retractor',             Price: 12.00 },
-  { Code: 'Ochsner Clamp',                   Price:  4.80 }, { Code: 'Ophthalmologic Forceps',          Price: 16.00 },
-  { Code: 'Pennington Forceps',              Price:  5.40 }, { Code: 'Pituitary Rongeur',               Price: 28.00 },
-  { Code: 'Plain Thumb Forceps',             Price:  3.80 }, { Code: 'Probe & Groove Director',         Price:  4.20 },
-  { Code: 'Richardson Retractor',            Price:  9.80 }, { Code: 'Right Angle Clamp',               Price:  6.50 },
-  { Code: 'Rochester-Carmalt Clamp',         Price:  5.10 }, { Code: 'Rochester-Pean Clamp',            Price:  5.00 },
-  { Code: 'Russian Forceps',                 Price:  5.20 }, { Code: 'Satinsky Vascular Clamp',         Price: 24.00 },
-  { Code: 'Senn Retractor',                  Price:  6.80 }, { Code: 'Sims Uterine Sound',              Price:  5.50 },
-  { Code: 'Skin Hook',                       Price:  4.60 }, { Code: 'Sponge Forceps',                  Price:  5.60 },
-  { Code: 'Sternum Punch',                   Price: 45.00 }, { Code: 'Suture Scissors',                 Price:  4.50 },
-  { Code: 'Takahashi Forceps',               Price: 18.50 }, { Code: 'Tenaculum Forceps',               Price:  6.20 },
-  { Code: 'Thumb Dressing Forceps',          Price:  3.80 }, { Code: 'Tissue Forceps - 2x3',            Price:  5.00 },
-  { Code: 'Tissue Forceps - 3x4',            Price:  5.20 }, { Code: 'Towel Clamp',                     Price:  3.10 },
-  { Code: 'Trocar',                          Price: 28.00 }, { Code: 'Utility Scissors',                Price:  4.50 },
-  { Code: 'Vascular Scissors',               Price: 14.00 }, { Code: 'Webster Needle Holder',           Price:  8.40 },
-  { Code: 'Wire Scissors',                   Price:  6.80 }, { Code: 'Yankauer Suction',                Price:  1.26 },
+  { Code: 'Adenotome',                                  Price:  6.16 },
+  { Code: 'Arthroscopy Grasper',                        Price: 23.40 },
+  { Code: 'Arthroscopy Punch',                          Price: 35.17 },
+  { Code: 'Arthroscopy Scissor',                        Price: 34.09 },
+  { Code: 'Aspirating/Biopsy Needle',                   Price: 20.24 },
+  { Code: 'Awl',                                        Price:  4.11 },
+  { Code: 'Basic Inspection',                           Price: 50.00 },
+  { Code: 'Biopsy Punch',                               Price: 18.98 },
+  { Code: 'Biopsy Punch - Cervical',                    Price: 21.76 },
+  { Code: 'Bone Chisel',                                Price:  6.16 },
+  { Code: 'Bone Cutter',                                Price: 22.14 },
+  { Code: 'Bone Hook',                                  Price:  7.59 },
+  { Code: 'Bone Tamp',                                  Price:  7.59 },
+  { Code: 'Caliper',                                    Price:  4.11 },
+  { Code: 'Chisel',                                     Price:  6.33 },
+  { Code: 'Chuck',                                      Price: 44.28 },
+  { Code: 'Clamp - Bulldog',                            Price:  7.59 },
+  { Code: 'Clamp - Hemo, Kelly, Allis, Peon, Crile',   Price:  5.06 },
+  { Code: 'Clamp - Vascular',                           Price:  6.96 },
+  { Code: 'Clip Applier',                               Price:  8.86 },
+  { Code: 'Cobb Elevator',                              Price:  8.59 },
+  { Code: 'Comprehensive Inspection',                   Price: 150.00 },
+  { Code: 'Container Bottom',                           Price: 50.09 },
+  { Code: 'Container Handle Replace - Genesis Brand',   Price: 70.71 },
+  { Code: 'Container Latch Replace - Aesculap Brand',   Price: 119.54 },
+  { Code: 'Container Latch Replace - Genesis Brand',    Price: 81.59 },
+  { Code: 'Container Lid',                              Price: 52.75 },
+  { Code: 'Container Retention Plate',                  Price:  9.17 },
+  { Code: 'Curette',                                    Price:  6.20 },
+  { Code: 'Curette - Micro',                            Price: 10.82 },
+  { Code: 'Curette - Ring',                             Price:  9.66 },
+  { Code: 'Diamond Dusting',                            Price: 69.58 },
+  { Code: 'Dilator',                                    Price:  6.96 },
+  { Code: 'Dissector',                                  Price:  4.11 },
+  { Code: 'Double Action Rongeur',                      Price: 27.07 },
+  { Code: 'Drill Bit',                                  Price:  6.20 },
+  { Code: 'Elevator',                                   Price:  8.16 },
+  { Code: 'Elevator - Freer/Dual Head',                 Price: 11.92 },
+  { Code: 'Elevator - Micro',                           Price:  8.22 },
+  { Code: 'Forcep - Bipolar',                           Price:  6.70 },
+  { Code: 'Forcep - General',                           Price:  4.43 },
+  { Code: 'Forcep - Micro, Jeweler',                    Price:  8.22 },
+  { Code: 'Forcep - Titanium',                          Price:  8.63 },
+  { Code: 'Gouge',                                      Price:  6.16 },
+  { Code: 'Knife',                                      Price:  8.22 },
+  { Code: 'Knife - Amputation',                         Price: 10.12 },
+  { Code: 'Knife - Micro',                              Price: 12.32 },
+  { Code: 'Knife Handle',                               Price:  3.29 },
+  { Code: 'Lap - Disassemble, Reinsulate Shaft, Reassemble', Price: 69.58 },
+  { Code: 'Lap - Full Rebuild',                         Price: 120.81 },
+  { Code: 'Lap - Minor Repair',                         Price: 57.56 },
+  { Code: 'Lap - Scissor',                              Price: 18.34 },
+  { Code: 'Mallet',                                     Price:  9.49 },
+  { Code: 'Manipulator',                                Price:  7.87 },
+  { Code: 'Manipulator - Micro',                        Price: 12.32 },
+  { Code: 'Misc. Labor (Half Hour)',                    Price: 56.93 },
+  { Code: 'Mouth Gag',                                  Price: 10.12 },
+  { Code: 'Nail Clipper',                               Price: 18.98 },
+  { Code: 'Needle Holder',                              Price:  8.86 },
+  { Code: 'Needle Holder - Micro',                      Price: 11.39 },
+  { Code: 'Needle Holder/Scissor Combo',                Price:  7.59 },
+  { Code: 'Osteotome',                                  Price:  6.62 },
+  { Code: 'Pick',                                       Price:  6.33 },
+  { Code: 'Pick - Micro',                               Price: 12.40 },
+  { Code: 'Pin Cutter',                                 Price: 20.24 },
+  { Code: 'Pin Cutter - Large',                         Price: 26.69 },
+  { Code: 'Plier',                                      Price:  6.96 },
+  { Code: 'Probe',                                      Price:  8.22 },
+  { Code: 'Rasp',                                       Price:  7.59 },
+  { Code: 'Reamer',                                     Price:  8.86 },
+  { Code: 'Reamer - Acetabular',                        Price: 25.30 },
+  { Code: 'Retractor - Bookwalter Blades',              Price: 10.71 },
+  { Code: 'Retractor - Double Ended',                   Price:  7.00 },
+  { Code: 'Retractor - Hand Held',                      Price:  5.69 },
+  { Code: 'Retractor - Opthalmic/Eye',                  Price: 18.98 },
+  { Code: 'Retractor - Self Retaining',                 Price: 14.55 },
+  { Code: 'Rib Sheer',                                  Price: 20.87 },
+  { Code: 'Rongeur',                                    Price: 23.66 },
+  { Code: 'Rongeur - Kerrison',                         Price: 28.46 },
+  { Code: 'Rongeur - Pituitary',                        Price: 27.07 },
+  { Code: 'Scissors - General, Curved',                 Price:  6.33 },
+  { Code: 'Scissors - Micro',                           Price: 17.08 },
+  { Code: 'Scissors - Oversized (10 and up)',           Price:  7.39 },
+  { Code: 'Scissors - Potts, Delicate',                 Price:  8.22 },
+  { Code: 'Scissors - Serrated, Supercut',              Price: 10.12 },
+  { Code: 'Scissors - TC',                              Price: 19.02 },
+  { Code: 'Sheath',                                     Price:  9.74 },
+  { Code: 'Single Action Rongeur',                      Price: 27.07 },
+  { Code: 'Skin Hook',                                  Price:  5.69 },
+  { Code: 'Skin Hook - Micro',                          Price:  9.68 },
+  { Code: 'Skin Rakes',                                 Price:  5.69 },
+  { Code: 'Snare',                                      Price:  8.86 },
+  { Code: 'Snare - Tonsil',                             Price:  8.86 },
+  { Code: 'Speculum',                                   Price:  6.96 },
+  { Code: 'Speculum - Eye, Wire',                       Price: 10.27 },
+  { Code: 'Speculum - GYN',                             Price:  9.29 },
+  { Code: 'Speculum - Nasal',                           Price:  7.97 },
+  { Code: 'Standard Inspection',                        Price: 100.00 },
+  { Code: 'Stringer',                                   Price:  4.43 },
+  { Code: 'Stylett',                                    Price:  6.54 },
+  { Code: 'Suction Tube',                               Price:  6.96 },
+  { Code: 'Suction Tube W/ Needle',                     Price:  9.49 },
+  { Code: 'Suture Passer',                              Price:  8.98 },
+  { Code: 'Taping - Per Piece',                         Price:  1.27 },
+  { Code: 'Total Curette',                              Price: 15.00 },
+  { Code: 'Trocar',                                     Price:  8.86 },
+  { Code: 'Verres Needle',                              Price: 30.82 },
 ];
 
 const trays = [
@@ -250,6 +311,18 @@ app.delete('/api/calendar-events/:id', (req, res) => {
   calendarEvents.splice(idx, 1);
   res.json({ success: true });
 });
+app.delete('/api/calendar-events/series/:seriesId', (req, res) => {
+  const seriesId = parseInt(req.params.seriesId);
+  const fromDate = req.query.from;
+  let removed = 0;
+  for (let i = calendarEvents.length - 1; i >= 0; i--) {
+    if (calendarEvents[i].SeriesId === seriesId && calendarEvents[i].EventDate >= fromDate) {
+      calendarEvents.splice(i, 1);
+      removed++;
+    }
+  }
+  res.json({ success: true, removed });
+});
 
 app.get('/api/site-services', (req, res) => {
   let list = [...siteServices];
@@ -271,6 +344,20 @@ app.patch('/api/site-services/:id', (req, res) => {
   if (idx === -1) return res.status(404).json({ error: 'Not found' });
   siteServices[idx] = { ...siteServices[idx], ...req.body };
   res.json(siteServices[idx]);
+});
+
+app.delete('/api/site-services/:id', (req, res) => {
+  const id = parseInt(req.params.id);
+  const idx = siteServices.findIndex(s => s.SiteServiceKey === id);
+  if (idx === -1) return res.status(404).json({ error: 'Not found' });
+  if (siteServices[idx].Status === 'submitted') return res.status(400).json({ error: 'Cannot delete a submitted service' });
+  // Remove associated trays, items, and documents
+  const trayKeys = trays.filter(t => t.SiteServiceKey === id).map(t => t.TrayKey);
+  trayKeys.forEach(tk => { for (let i = trayItems.length - 1; i >= 0; i--) if (trayItems[i].TrayKey === tk) trayItems.splice(i, 1); });
+  for (let i = trays.length - 1; i >= 0; i--) if (trays[i].SiteServiceKey === id) trays.splice(i, 1);
+  for (let i = documents.length - 1; i >= 0; i--) if (documents[i].SiteServiceKey === id) documents.splice(i, 1);
+  siteServices.splice(idx, 1);
+  res.json({ ok: true });
 });
 
 // Trays
@@ -312,7 +399,7 @@ app.delete('/api/site-services/:id/trays/:trayId', (req, res) => {
 app.post('/api/site-services/:id/trays/:trayId/items', (req, res) => {
   const trayId = parseInt(req.params.trayId);
   if (!trays.find(t => t.TrayKey === trayId)) return res.status(404).json({ error: 'Tray not found' });
-  const item = { ItemKey: nextKey++, TrayKey: trayId, InstrumentType: req.body.InstrumentType, UnitPrice: req.body.UnitPrice || 0, TotalCount: req.body.TotalCount || 0, RepairedCount: 0, SentToTSICount: 0, BERCount: 0 };
+  const item = { ItemKey: nextKey++, TrayKey: trayId, InstrumentType: req.body.InstrumentType, UnitPrice: req.body.UnitPrice || 0, TotalCount: req.body.TotalCount || 1, RepairedCount: 0, SentToTSICount: 0, BERCount: 0 };
   trayItems.push(item);
   res.status(201).json(item);
 });

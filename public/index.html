@@ -168,6 +168,8 @@
   .item-nochg.rep-neg{color:var(--red)}
   .item-price{font-size:11px;color:var(--muted)}
   .item-cost{font-size:12px;font-weight:800;color:var(--navy)}
+  .btn-del-service{width:28px;height:28px;border:none;background:transparent;cursor:pointer;border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--muted);transition:all .15s}
+  .btn-del-service:hover{background:var(--red-lt);color:var(--red)}
   .btn-del-item{width:24px;height:24px;border:none;background:transparent;cursor:pointer;border-radius:5px;display:flex;align-items:center;justify-content:center;color:var(--muted);margin:0 auto}
   .btn-del-item:hover{background:var(--red-lt);color:var(--red)}
   .btn-del-item:disabled{opacity:.3;cursor:not-allowed}
@@ -180,6 +182,11 @@
   .tray-cost-badge{font-size:15px;font-weight:800;color:var(--navy)}
   .tray-cost-label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;display:block;text-align:right}
   .tray-empty{text-align:center;padding:24px;color:var(--muted);font-size:13px;font-weight:500}
+  .visit-summary-strip{display:flex;align-items:stretch;border:2px solid var(--navy);border-radius:10px;overflow:hidden;margin-bottom:12px;background:#fff}
+  .visit-summary-strip .vss-cell{flex:1;padding:10px 8px;text-align:center}
+  .visit-summary-strip .vss-cell+.vss-cell{border-left:1px solid var(--border-dk)}
+  .visit-summary-strip .vss-val{display:block;font-size:17px;font-weight:700;color:var(--navy)}
+  .visit-summary-strip .vss-lbl{display:block;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);margin-top:2px}
   .visit-total-bar{background:var(--navy);border-radius:12px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
   .visit-total-bar .vtl{color:rgba(255,255,255,.7);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;display:block}
   .visit-total-bar .vtv{color:#fff;font-size:18px;font-weight:800;display:block}
@@ -400,6 +407,20 @@
       <label>Date</label>
       <input class="modal-input" type="date" id="calDate">
     </div>
+    <div class="modal-field">
+      <label>Repeat</label>
+      <select class="modal-input" id="calRepeat" onchange="toggleRepeatEnd()">
+        <option value="">None</option>
+        <option value="daily">Daily</option>
+        <option value="weekly">Weekly</option>
+        <option value="biweekly">Biweekly</option>
+        <option value="monthly">Monthly</option>
+      </select>
+    </div>
+    <div class="modal-field" id="repeatEndWrap" style="display:none">
+      <label>Repeat Until</label>
+      <input class="modal-input" type="date" id="calRepeatEnd">
+    </div>
     <div class="modal-actions">
       <button class="btn btn-secondary" style="flex:1" onclick="closeModal('modalCalEvent')">Cancel</button>
       <button class="btn btn-danger" style="flex:0;padding:0 16px;display:none" id="calDeleteBtn" onclick="confirmDeleteCalEvent()">Delete</button>
@@ -526,6 +547,7 @@
     <div class="confirm-msg" id="confirmMsg"></div>
     <div class="modal-actions" style="margin-top:24px">
       <button class="btn btn-secondary" style="flex:1" onclick="closeModal('modalConfirm')">Cancel</button>
+      <button class="btn btn-danger" style="flex:1;display:none" id="confirmSecBtn">Secondary</button>
       <button class="btn" style="flex:1" id="confirmOkBtn">Confirm</button>
     </div>
   </div>
@@ -659,7 +681,7 @@ async function renderCalendar() {
     html += `<div class="cal-day${isOther?' other-month':''}${isToday?' today':''}" ${!isOther ? `onclick="dayClick('${dateStr}')"`:''}>`;
     html += `<div class="cal-day-num">${day}</div>`;
     show.forEach(ev => {
-      html += `<div class="cal-event" style="background:${techColor(ev.TechnicianKey)}" onclick="event.stopPropagation();editCalEvent(${ev.EventKey})">${ev.ClientName}<span class="cal-event-dept">${ev.DepartmentName}</span></div>`;
+      html += `<div class="cal-event" style="background:${techColor(ev.TechnicianKey)}" onclick="event.stopPropagation();editCalEvent(${ev.EventKey})">${ev.RecurrenceType ? '🔁 ' : ''}${ev.ClientName}<span class="cal-event-dept">${ev.DepartmentName}</span></div>`;
     });
     if (extra > 0) html += `<div class="cal-more">+${extra} more</div>`;
     if (!isOther) html += `<div class="cal-add">+</div>`;
@@ -686,6 +708,10 @@ function prevMonth() { if(currentMonth===0){currentMonth=11;currentYear--;}else 
 function nextMonth() { if(currentMonth===11){currentMonth=0;currentYear++;}else currentMonth++; renderCalendar(); }
 function goToday()   { const t=new Date();currentMonth=t.getMonth();currentYear=t.getFullYear();renderCalendar(); }
 
+function toggleRepeatEnd() {
+  document.getElementById('repeatEndWrap').style.display = document.getElementById('calRepeat').value ? 'block' : 'none';
+}
+
 function dayClick(dateStr) {
   currentCalEvent = null;
   document.getElementById('calModalTitle').textContent = 'Add Visit';
@@ -693,6 +719,10 @@ function dayClick(dateStr) {
   document.getElementById('calDeleteBtn').style.display = 'none';
   document.getElementById('calClient').value = '';
   document.getElementById('calDept').innerHTML = '<option value="">— Select Client First —</option>';
+  document.getElementById('calRepeat').value = '';
+  document.getElementById('calRepeat').disabled = false;
+  document.getElementById('calRepeatEnd').value = '';
+  document.getElementById('repeatEndWrap').style.display = 'none';
   openModal('modalCalEvent');
 }
 
@@ -711,6 +741,15 @@ function editCalEvent(id) {
     if (opt) deptSel.value = opt.value;
   }, 50);
   setSeg('segLocation', document.querySelector(`#segLocation .seg-btn${ev.ServiceLocation==='South'?':last-child':':first-child'}`), ev.ServiceLocation);
+  document.getElementById('calRepeat').value = '';
+  document.getElementById('calRepeatEnd').value = '';
+  document.getElementById('repeatEndWrap').style.display = 'none';
+  if (ev.RecurrenceType) {
+    document.getElementById('calRepeat').value = ev.RecurrenceType;
+    document.getElementById('calRepeat').disabled = true;
+  } else {
+    document.getElementById('calRepeat').disabled = false;
+  }
   document.getElementById('calDeleteBtn').style.display = 'flex';
   openModal('modalCalEvent');
 }
@@ -719,6 +758,8 @@ async function saveCalEvent() {
   const clientId = parseInt(document.getElementById('calClient').value);
   if (!clientId) { showToast('Select a client', 'error'); return; }
   const deptSel = document.getElementById('calDept');
+  const repeat = document.getElementById('calRepeat').value;
+  const repeatEnd = document.getElementById('calRepeatEnd').value;
   const payload = {
     ClientKey: clientId, ClientName: document.getElementById('calClient').options[document.getElementById('calClient').selectedIndex].text,
     DepartmentKey: parseInt(deptSel.value), DepartmentName: deptSel.options[deptSel.selectedIndex]?.text || '',
@@ -728,23 +769,71 @@ async function saveCalEvent() {
   };
   if (currentCalEvent) {
     await fetch(`/api/calendar-events/${currentCalEvent.EventKey}`, { method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) });
+    closeModal('modalCalEvent');
+    renderCalendar();
+    showToast('Visit updated', 'success');
+  } else if (repeat && repeatEnd) {
+    // Generate recurring events
+    const dates = generateRecurringDates(payload.EventDate, repeat, repeatEnd);
+    const seriesId = Date.now();
+    for (const d of dates) {
+      await fetch('/api/calendar-events', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ ...payload, EventDate: d, RecurrenceType: repeat, SeriesId: seriesId }) });
+    }
+    closeModal('modalCalEvent');
+    renderCalendar();
+    showToast(`${dates.length} recurring visits added`, 'success');
   } else {
     await fetch('/api/calendar-events', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) });
+    closeModal('modalCalEvent');
+    renderCalendar();
+    showToast('Visit added', 'success');
   }
-  closeModal('modalCalEvent');
-  renderCalendar();
-  showToast(currentCalEvent ? 'Visit updated' : 'Visit added', 'success');
+}
+
+function generateRecurringDates(startDate, type, endDate) {
+  const dates = [];
+  let current = new Date(startDate + 'T00:00:00');
+  const end = new Date(endDate + 'T00:00:00');
+  while (current <= end) {
+    dates.push(current.toISOString().split('T')[0]);
+    switch (type) {
+      case 'daily':    current.setDate(current.getDate() + 1); break;
+      case 'weekly':   current.setDate(current.getDate() + 7); break;
+      case 'biweekly': current.setDate(current.getDate() + 14); break;
+      case 'monthly':  current.setMonth(current.getMonth() + 1); break;
+    }
+  }
+  return dates;
 }
 
 function confirmDeleteCalEvent() {
-  showConfirm({ icon:'🗑', color:var_red, title:'Delete Visit?', msg:'This calendar entry will be removed.', btnLabel:'Delete', btnClass:'btn-danger',
-    onConfirm: async () => {
-      await fetch(`/api/calendar-events/${currentCalEvent.EventKey}`, { method:'DELETE' });
-      closeModal('modalCalEvent');
-      renderCalendar();
-      showToast('Visit deleted');
-    }
-  });
+  if (currentCalEvent.SeriesId) {
+    // Recurring event — ask scope
+    showConfirm({ icon:'🗑', color:var_red, title:'Delete Recurring Visit?', msg:'Delete just this visit, or this and all future visits in the series?', btnLabel:'This Only', btnClass:'btn-danger',
+      secondaryLabel: 'All Future',
+      onConfirm: async () => {
+        await fetch(`/api/calendar-events/${currentCalEvent.EventKey}`, { method:'DELETE' });
+        closeModal('modalCalEvent');
+        renderCalendar();
+        showToast('Visit deleted');
+      },
+      onSecondary: async () => {
+        await fetch(`/api/calendar-events/series/${currentCalEvent.SeriesId}?from=${currentCalEvent.EventDate}`, { method:'DELETE' });
+        closeModal('modalCalEvent');
+        renderCalendar();
+        showToast('Future visits deleted');
+      }
+    });
+  } else {
+    showConfirm({ icon:'🗑', color:var_red, title:'Delete Visit?', msg:'This calendar entry will be removed.', btnLabel:'Delete', btnClass:'btn-danger',
+      onConfirm: async () => {
+        await fetch(`/api/calendar-events/${currentCalEvent.EventKey}`, { method:'DELETE' });
+        closeModal('modalCalEvent');
+        renderCalendar();
+        showToast('Visit deleted');
+      }
+    });
+  }
 }
 
 // ── SERVICES LIST ─────────────────────────────────────────────────────────────
@@ -770,7 +859,10 @@ function renderServiceList(list) {
     return `<div class="service-card" onclick="openDetail(${s.SiteServiceKey})">
       <div class="service-card-top">
         <div class="service-client">${s.ClientName}</div>
-        <svg class="chevron" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+        <div style="display:flex;align-items:center;gap:6px">
+          ${s.Status === 'draft' ? `<button class="btn-del-service" onclick="event.stopPropagation();confirmDeleteService(${s.SiteServiceKey},'${s.ClientName.replace(/'/g,"\\'")}','${d}')" title="Delete Order"><svg viewBox="0 0 24 24" width="16" height="16" stroke="var(--muted)" fill="none" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg></button>` : ''}
+          <svg class="chevron" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
       </div>
       <div class="service-dept">${s.DepartmentName}</div>
       <div class="service-meta">
@@ -859,9 +951,9 @@ function renderDetail() {
           </div>
         </div>
         <div class="tray-totals-strip" id="tsum-${t.TrayKey}">
-          <div class="tts-cell"><span class="tts-label">Instr</span><span class="tts-val">${totInstr}</span></div>
+          <div class="tts-cell"><span class="tts-label" style="font-weight:800">Total Instruments In Tray</span><span class="tts-val" style="font-weight:800">${totInstr}</span></div>
           <div class="tts-cell"><span class="tts-label">Inspected</span><span class="tts-val${totNoChg<0?' neg':''}">${totNoChg}</span></div>
-          <div class="tts-cell"><span class="tts-label">Repaired</span><span class="tts-val" style="color:var(--green)">${totRep}</span></div>
+          <div class="tts-cell"><span class="tts-label">Repaired &amp; Inspected</span><span class="tts-val" style="color:var(--green)">${totRep}</span></div>
           <div class="tts-cell"><span class="tts-label">Sent TSI</span><span class="tts-val">${totSent}</span></div>
           <div class="tts-cell"><span class="tts-label">BER</span><span class="tts-val">${totBer}</span></div>
           <div class="tts-cell" style="flex:1.5"><span class="tts-label">Tray Total</span><span class="tts-val">$${trayCost.toFixed(2)}</span></div>
@@ -873,7 +965,7 @@ function renderDetail() {
         html += `<div style="overflow-x:auto"><table class="item-table">
           <thead><tr>
             <th style="text-align:left;padding-left:12px;min-width:160px">Instrument Type</th>
-            <th>Total</th><th>Inspected</th><th>Repaired</th><th>Sent TSI</th><th>BER</th><th>Unit $</th><th>Cost</th>
+            <th>Total</th><th>Inspected</th><th>Repaired &amp; Inspected</th><th>Sent TSI</th><th>BER</th><th>Unit $</th><th>Cost</th>
             ${!submitted ? '<th></th>' : ''}
           </tr></thead><tbody>`;
         items.forEach(item => {
@@ -895,9 +987,9 @@ function renderDetail() {
         html += `</tbody></table></div>
         <div class="tray-item-totals">
           <div class="tray-totals-cells" id="tbot-${t.TrayKey}">
-            <div class="tray-tot"><span>${totInstr}</span>Instr.</div>
+            <div class="tray-tot" style="font-weight:800"><span>${totInstr}</span>Total Instruments In Tray</div>
             <div class="tray-tot"><span style="color:${totNoChg<0?'var(--red)':'var(--muted)'}">${totNoChg}</span>Inspected</div>
-            <div class="tray-tot"><span style="color:var(--green)">${totRep}</span>Repaired</div>
+            <div class="tray-tot"><span style="color:var(--green)">${totRep}</span>Repaired &amp; Inspected</div>
             <div class="tray-tot"><span>${totSent}</span>Sent TSI</div>
             <div class="tray-tot"><span>${totBer}</span>BER</div>
           </div>
@@ -914,11 +1006,20 @@ function renderDetail() {
     const visitTotal = currentTrays.reduce((sum, t) => sum + (t.Items||[]).reduce((s, i) => s + i.RepairedCount * i.UnitPrice, 0), 0);
     const valueDelivered = currentTrays.reduce((sum, t) => sum + (t.Items||[]).reduce((s, i) => s + (i.TotalCount - i.SentToTSICount - i.BERCount) * i.UnitPrice, 0), 0);
     const totalInstr = currentTrays.reduce((sum, t) => sum + (t.Items||[]).reduce((s, i) => s + i.TotalCount, 0), 0);
+    const totalRepaired = currentTrays.reduce((sum, t) => sum + (t.Items||[]).reduce((s, i) => s + i.RepairedCount, 0), 0);
     const totalBER = currentTrays.reduce((sum, t) => sum + (t.Items||[]).reduce((s, i) => s + i.BERCount, 0), 0);
     const totalSentTSI = currentTrays.reduce((sum, t) => sum + (t.Items||[]).reduce((s, i) => s + i.SentToTSICount, 0), 0);
+    const totalInspected = Math.max(0, totalInstr - totalRepaired - totalSentTSI - totalBER);
     const berRate = totalInstr > 0 ? (totalBER / totalInstr * 100) : 0;
     const sentRate = totalInstr > 0 ? (totalSentTSI / totalInstr * 100) : 0;
-    html += `<div class="visit-total-bar">
+    html += `<div class="visit-summary-strip">
+      <div class="vss-cell"><span class="vss-val" style="font-weight:800">${totalInstr}</span><span class="vss-lbl" style="font-weight:800">Total Instruments</span></div>
+      <div class="vss-cell"><span class="vss-val">${totalInspected}</span><span class="vss-lbl">Inspected</span></div>
+      <div class="vss-cell"><span class="vss-val" style="color:var(--green)">${totalRepaired}</span><span class="vss-lbl">Repaired &amp; Inspected</span></div>
+      <div class="vss-cell"><span class="vss-val" style="color:var(--red)">${totalBER}</span><span class="vss-lbl">BER</span></div>
+      <div class="vss-cell"><span class="vss-val">${totalSentTSI}</span><span class="vss-lbl">Sent to TSI</span></div>
+    </div>
+    <div class="visit-total-bar">
       <div>
         <span class="vtl">Total Value Delivered</span>
         <span class="vtv">$${valueDelivered.toFixed(2)}</span>
@@ -965,10 +1066,14 @@ function renderDetail() {
       <button class="btn btn-secondary" onclick="switchView('services')">Close</button>
       <button class="btn btn-primary" onclick="saveRecord()">Save</button>
       <button class="btn btn-success" onclick="confirmSubmit()">Submit</button>
+      <button class="btn btn-secondary" onclick="viewServiceReport()" style="margin-left:auto">📄 View Report</button>
+      <button class="btn btn-secondary" onclick="exportCSV()">⬇ Export CSV</button>
     </div>`;
   } else {
     html += `<div class="action-bar">
       <button class="btn btn-secondary" onclick="switchView('services')">Close</button>
+      <button class="btn btn-secondary" onclick="viewServiceReport()" style="margin-left:auto">📄 View Report</button>
+      <button class="btn btn-secondary" onclick="exportCSV()">⬇ Export CSV</button>
     </div>`;
   }
 
@@ -1202,6 +1307,16 @@ async function confirmAddTray() {
   if (currentTrayPath !== 'saved') openAddItemModal(newTray.TrayKey);
 }
 
+function confirmDeleteService(id, clientName, date) {
+  showConfirm({ icon:'🗑', color:var_red, title:'Delete Order?', msg:`Permanently delete the draft order for "${clientName}" on ${date}? This cannot be undone.`, btnLabel:'Delete', btnClass:'btn-danger',
+    onConfirm: async () => {
+      await fetch(`/api/site-services/${id}`, { method: 'DELETE' });
+      loadServices();
+      showToast('Order deleted');
+    }
+  });
+}
+
 function deleteTray(trayId) {
   const tray = currentTrays.find(t => t.TrayKey === trayId);
   showConfirm({ icon:'🗑', color:var_red, title:'Remove Tray?', msg:`Remove "${tray?.TrayName||'this tray'}" and all its items?`, btnLabel:'Remove', btnClass:'btn-danger',
@@ -1237,7 +1352,7 @@ function renderInstrumentList(query) {
 }
 
 function addToCart(code, price) {
-  instrCart.set(code, { price, count: 0 });
+  instrCart.set(code, { price, count: 1 });
   renderInstrumentCart();
   renderInstrumentList(document.getElementById('instrSearch').value);
   // focus the new count input
@@ -1309,6 +1424,141 @@ function deleteItem(trayKey, itemKey) {
       showToast('Item removed');
     }
   });
+}
+
+// ── VIEW SERVICE REPORT ──────────────────────────────────────────────────────
+function viewServiceReport() {
+  if (!currentService || !currentTrays.length) { showToast('No data to generate report', 'error'); return; }
+  const s = currentService;
+  let totInstr=0, totInsp=0, totRep=0, totSent=0, totBer=0, totCost=0;
+  currentTrays.forEach(t => (t.Items||[]).forEach(i => {
+    totInstr+=i.TotalCount; totRep+=i.RepairedCount; totSent+=i.SentToTSICount; totBer+=i.BERCount;
+    totCost+=i.RepairedCount*i.UnitPrice;
+  }));
+  totInsp = Math.max(0, totInstr - totRep - totSent - totBer);
+
+  let trayRows = '';
+  currentTrays.forEach((t, idx) => {
+    const items = t.Items || [];
+    let tInstr=0, tInsp=0, tRep=0, tSent=0, tBer=0;
+    items.forEach(i => { tInstr+=i.TotalCount; tRep+=i.RepairedCount; tSent+=i.SentToTSICount; tBer+=i.BERCount; });
+    tInsp = Math.max(0, tInstr - tRep - tSent - tBer);
+    trayRows += `<tr><td style="text-align:center">${idx+1}</td><td>${t.TrayName}</td><td style="text-align:center">${tInstr}</td><td style="text-align:center">${tInsp}</td><td style="text-align:center">${tRep}</td><td style="text-align:center">${tSent}</td><td style="text-align:center">${tBer}</td></tr>`;
+  });
+
+  const d = new Date(s.OnsiteDate + 'T00:00:00').toLocaleDateString('en-US', {month:'long',day:'numeric',year:'numeric'});
+  const win = window.open('', '_blank');
+  win.document.write(`<!DOCTYPE html><html><head><title>Onsite Service Report</title>
+    <style>
+      *{margin:0;padding:0;box-sizing:border-box}body{font-family:'Inter',Arial,sans-serif;color:#1A202C;padding:40px 50px;font-size:13px}
+      .header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;border-bottom:3px solid #00257A;padding-bottom:16px}
+      .logo-area{font-size:22px;font-weight:800;color:#00257A}
+      .logo-sub{font-size:11px;color:#666;font-weight:500}
+      .invoice-info{text-align:right;font-size:12px;color:#444}
+      .invoice-num{font-size:15px;font-weight:800;color:#00257A}
+      h2{font-size:16px;color:#00257A;margin:20px 0 12px;border-bottom:1px solid #ddd;padding-bottom:6px}
+      .info-grid{display:grid;grid-template-columns:140px 1fr;gap:4px 12px;font-size:12px;margin-bottom:16px}
+      .info-grid dt{font-weight:700;color:#444}
+      .info-grid dd{color:#1A202C}
+      table{width:100%;border-collapse:collapse;margin-bottom:16px}
+      th{background:#00257A;color:#fff;font-size:10px;text-transform:uppercase;letter-spacing:.5px;padding:8px 10px;text-align:left}
+      td{padding:7px 10px;border-bottom:1px solid #ddd;font-size:12px}
+      tr:nth-child(even) td{background:#f8f9fc}
+      .totals-row td{font-weight:800;background:#EEF1F7!important;border-top:2px solid #00257A}
+      .summary{display:flex;gap:16px;margin:16px 0;flex-wrap:wrap}
+      .sum-box{flex:1;min-width:100px;background:#f8f9fc;border:1px solid #ddd;border-radius:8px;padding:12px;text-align:center}
+      .sum-val{font-size:18px;font-weight:800;color:#00257A}
+      .sum-lbl{font-size:9px;font-weight:700;color:#888;text-transform:uppercase;margin-top:2px}
+      .footer{margin-top:30px;text-align:center;font-size:10px;color:#888;border-top:1px solid #ddd;padding-top:12px}
+      @media print{body{padding:20px 30px}button{display:none!important}}
+    </style></head><body>
+    <div class="header">
+      <div>
+        <div class="logo-area">Total Scope, Inc.</div>
+        <div class="logo-sub">The Leader in Medical Device Repair</div>
+      </div>
+      <div class="invoice-info">
+        <div class="invoice-num">${s.WorkOrderNumber || 'N/A'}</div>
+        <div>Onsite Service Report</div>
+      </div>
+    </div>
+    <h2>Facility / Service Details</h2>
+    <dl class="info-grid">
+      <dt>Facility</dt><dd>${s.ClientName}</dd>
+      <dt>Department</dt><dd>${s.DepartmentName}</dd>
+      <dt>Address</dt><dd>${s.Address || ''}</dd>
+      <dt>Onsite Date</dt><dd>${d}</dd>
+      <dt>Work Order #</dt><dd>${s.WorkOrderNumber || 'N/A'}</dd>
+      <dt>Mobile Tech</dt><dd>${s.TechnicianName}</dd>
+      <dt>Total Trays</dt><dd>${currentTrays.length}</dd>
+      ${s.PurchaseOrder ? `<dt>Purchase Order</dt><dd>${s.PurchaseOrder}</dd>` : ''}
+    </dl>
+    <h2>Service Summary</h2>
+    <table>
+      <thead><tr><th style="width:50px">Tray</th><th>Description</th><th style="text-align:center">Instruments</th><th style="text-align:center">Inspected</th><th style="text-align:center">Repaired &amp; Inspected</th><th style="text-align:center">Sent to TSI</th><th style="text-align:center">BER</th></tr></thead>
+      <tbody>${trayRows}
+        <tr class="totals-row"><td></td><td>TOTALS</td><td style="text-align:center">${totInstr}</td><td style="text-align:center">${totInsp}</td><td style="text-align:center">${totRep}</td><td style="text-align:center">${totSent}</td><td style="text-align:center">${totBer}</td></tr>
+      </tbody>
+    </table>
+    <div class="summary">
+      <div class="sum-box"><div class="sum-val">${totInstr}</div><div class="sum-lbl">Total Instruments</div></div>
+      <div class="sum-box"><div class="sum-val">${totInsp}</div><div class="sum-lbl">Inspected</div></div>
+      <div class="sum-box"><div class="sum-val">${totRep}</div><div class="sum-lbl">Repaired &amp; Inspected</div></div>
+      <div class="sum-box"><div class="sum-val">${totBer}</div><div class="sum-lbl">BER</div></div>
+      <div class="sum-box"><div class="sum-val">${totSent}</div><div class="sum-lbl">Sent to TSI</div></div>
+    </div>
+    <div style="text-align:right;margin-top:16px">
+      <span style="font-size:14px;font-weight:800;color:#00257A">SUB TOTAL: $${totCost.toFixed(2)}</span>
+    </div>
+    <div class="footer">
+      <p>An ISO Certified Company meeting the Medical Device Standards of ISO 13485</p>
+      <p style="margin-top:4px">17 Creek Parkway, Upper Chichester, PA 19061 | 800-471-2255 | www.totalscopeinc.com</p>
+    </div>
+    <div style="text-align:center;margin-top:16px"><button onclick="window.print()" style="padding:10px 24px;background:#00257A;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">Print / Save as PDF</button></div>
+  </body></html>`);
+  win.document.close();
+}
+
+// ── CSV EXPORT ───────────────────────────────────────────────────────────────
+function exportCSV() {
+  if (!currentService || !currentTrays.length) { showToast('No tray data to export', 'error'); return; }
+  const rows = [['Tray', 'Instrument Type', 'Total', 'Inspected', 'Repaired & Inspected', 'Sent to TSI', 'BER', 'Unit Price', 'Line Total']];
+  currentTrays.forEach(t => {
+    (t.Items || []).forEach(item => {
+      const inspected = Math.max(0, item.TotalCount - item.RepairedCount - item.SentToTSICount - item.BERCount);
+      const lineCost = item.RepairedCount * item.UnitPrice;
+      rows.push([
+        `"${t.TrayName}"`, `"${item.InstrumentType}"`, item.TotalCount, inspected,
+        item.RepairedCount, item.SentToTSICount, item.BERCount,
+        item.UnitPrice.toFixed(2), lineCost.toFixed(2)
+      ]);
+    });
+  });
+  // Summary row
+  let totInstr=0, totInsp=0, totRep=0, totSent=0, totBer=0, totCost=0;
+  currentTrays.forEach(t => (t.Items||[]).forEach(i => {
+    totInstr+=i.TotalCount; totRep+=i.RepairedCount; totSent+=i.SentToTSICount; totBer+=i.BERCount;
+    totCost+=i.RepairedCount*i.UnitPrice;
+  }));
+  totInsp = Math.max(0, totInstr - totRep - totSent - totBer);
+  rows.push([]);
+  rows.push(['"TOTALS"', '', totInstr, totInsp, totRep, totSent, totBer, '', totCost.toFixed(2)]);
+  rows.push([]);
+  rows.push(['"Client"', `"${currentService.ClientName}"`]);
+  rows.push(['"Department"', `"${currentService.DepartmentName}"`]);
+  rows.push(['"Technician"', `"${currentService.TechnicianName}"`]);
+  rows.push(['"Date"', `"${currentService.OnsiteDate}"`]);
+  rows.push(['"Work Order"', `"${currentService.WorkOrderNumber || ''}"`]);
+
+  const csv = rows.map(r => r.join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `SiteService_${currentService.ClientName.replace(/[^a-zA-Z0-9]/g,'_')}_${currentService.OnsiteDate}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('CSV exported', 'success');
 }
 
 // ── RECORD SAVE / SUBMIT ──────────────────────────────────────────────────────
@@ -1480,7 +1730,7 @@ function setSeg(containerId, btn, val) {
 const var_red   = '#B71234';
 const var_green = '#16A34A';
 
-function showConfirm({ icon, color, title, msg, btnLabel, btnClass, onConfirm }) {
+function showConfirm({ icon, color, title, msg, btnLabel, btnClass, onConfirm, secondaryLabel, onSecondary }) {
   document.getElementById('confirmIcon').style.background = color;
   document.getElementById('confirmIcon').innerHTML = `<svg viewBox="0 0 24 24"><text y="20" font-size="18" fill="white">${icon}</text></svg>`;
   document.getElementById('confirmTitle').textContent = title;
@@ -1489,6 +1739,14 @@ function showConfirm({ icon, color, title, msg, btnLabel, btnClass, onConfirm })
   btn.textContent = btnLabel;
   btn.className = 'btn ' + btnClass;
   btn.onclick = () => { closeModal('modalConfirm'); onConfirm(); };
+  const secBtn = document.getElementById('confirmSecBtn');
+  if (secondaryLabel && onSecondary) {
+    secBtn.textContent = secondaryLabel;
+    secBtn.style.display = 'flex';
+    secBtn.onclick = () => { closeModal('modalConfirm'); onSecondary(); };
+  } else {
+    secBtn.style.display = 'none';
+  }
   openModal('modalConfirm');
 }
 
