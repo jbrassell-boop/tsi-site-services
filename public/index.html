@@ -285,6 +285,47 @@
   .confirm-icon{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 12px}
   .confirm-icon svg{width:28px;height:28px;stroke:#fff;fill:none;stroke-width:2.5}
   .confirm-msg{text-align:center;color:var(--label);font-size:14px;line-height:1.6;margin-bottom:4px}
+
+/* ── REPORTS ── */
+.report-subtabs{display:flex;background:var(--bg);border-radius:10px;padding:3px;gap:3px;margin-bottom:12px}
+.report-subtab{flex:1;height:38px;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;background:transparent;color:var(--muted);transition:all .15s}
+.report-subtab.active{background:#fff;color:var(--navy);box-shadow:0 1px 6px rgba(0,0,0,.12)}
+.report-panel{display:none}
+.report-panel.active{display:block}
+.rpt-toolbar{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;align-items:center}
+.rpt-search{flex:1;min-width:160px;height:38px;border:1px solid var(--border);border-radius:10px;padding:0 12px;font-size:13px;font-family:inherit;color:var(--text);background:#fff}
+.rpt-search:focus{outline:none;border-color:var(--navy)}
+.rpt-seg{display:flex;background:var(--bg);border-radius:10px;padding:3px;gap:3px}
+.rpt-seg-btn{height:32px;padding:0 12px;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;background:transparent;color:var(--muted);transition:all .15s}
+.rpt-seg-btn.active{background:#fff;color:var(--navy);box-shadow:0 1px 4px rgba(0,0,0,.1)}
+.btn-export{height:38px;background:#fff;color:var(--navy);border:1.5px solid var(--border);border-radius:10px;padding:0 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:6px}
+.btn-export svg{width:15px;height:15px;stroke:var(--navy);fill:none;stroke-width:2}
+.rpt-table-wrap{background:#fff;border-radius:8px;border:1px solid var(--border);overflow:hidden;overflow-x:auto}
+.rpt-table{width:100%;border-collapse:collapse;min-width:580px}
+.rpt-table thead tr{background:var(--navy)}
+.rpt-table thead th{color:rgba(255,255,255,.85);font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;padding:10px 12px;text-align:left;white-space:nowrap}
+.rpt-table tbody tr{border-bottom:1px solid var(--border);transition:background .1s}
+.rpt-table tbody tr:last-child{border-bottom:none}
+.rpt-table tbody tr:hover{background:#F8FAFF}
+.rpt-table td{padding:9px 12px;font-size:12px;color:var(--text)}
+.rpt-table td.muted{color:var(--muted)}
+.gap-chip{font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px}
+.gap-green{background:#D1FAE5;color:#065F46}
+.gap-amber{background:#FEF3C7;color:#92400E}
+.gap-red{background:#FEE2E2;color:#9B1C1C}
+.cv-kpi-strip{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.cv-kpi{background:#fff;border:1px solid var(--border);border-radius:8px;flex:1;min-width:100px;padding:10px 12px;text-align:center}
+.cv-kpi-val{display:block;font-size:20px;font-weight:800;color:var(--navy)}
+.cv-kpi-lbl{display:block;font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-top:3px}
+.cv-kpi.highlight{background:var(--navy);border-color:var(--navy)}
+.cv-kpi.highlight .cv-kpi-val{color:#fff}
+.cv-kpi.highlight .cv-kpi-lbl{color:rgba(255,255,255,.65)}
+.cv-client-wrap{display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+.cv-client-select{flex:1;min-width:200px;height:42px;border:1px solid var(--border);border-radius:10px;padding:0 12px;font-size:14px;font-family:inherit;color:var(--text);background:#fff}
+.cv-client-select:focus{outline:none;border-color:var(--navy)}
+.btn-print{height:42px;background:#fff;color:var(--navy);border:1.5px solid var(--border);border-radius:10px;padding:0 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.btn-print svg{width:15px;height:15px;stroke:var(--navy);fill:none;stroke-width:2}
+@media print{.topbar,.tabbar,.cv-client-wrap,.report-subtabs{display:none!important}.view{position:static!important;overflow:visible!important}}
 </style>
 </head>
 <body>
@@ -321,6 +362,10 @@
     <div class="tab" data-view="detail" id="detailTab" style="display:none">
       <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
       Record
+    </div>
+    <div class="tab" data-view="reports" onclick="switchView('reports')">
+      <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      Reports
     </div>
   </div>
 
@@ -372,6 +417,47 @@
         Back to Services
       </div>
       <div id="detailContent"></div>
+    </div>
+
+    <!-- ── REPORTS ── -->
+    <div class="view" id="view-reports">
+      <div class="report-subtabs">
+        <button class="report-subtab active" onclick="switchReportTab('tray-gap',this)">Tray Gap</button>
+        <button class="report-subtab" onclick="switchReportTab('customer-value',this)">Customer Value</button>
+      </div>
+      <div class="report-panel active" id="rpt-tray-gap">
+        <div class="rpt-toolbar">
+          <input class="rpt-search" type="text" id="gapSearch" placeholder="Search client..." oninput="filterGapReport()">
+          <div class="rpt-seg" id="segGapThreshold">
+            <button class="rpt-seg-btn active" onclick="setGapThreshold(this,30)">30d</button>
+            <button class="rpt-seg-btn" onclick="setGapThreshold(this,60)">60d</button>
+            <button class="rpt-seg-btn" onclick="setGapThreshold(this,90)">90d</button>
+            <button class="rpt-seg-btn" onclick="setGapThreshold(this,0)">All</button>
+          </div>
+          <button class="btn-export" onclick="exportGapCSV()">
+            <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Export CSV
+          </button>
+        </div>
+        <div class="rpt-table-wrap">
+          <table class="rpt-table">
+            <thead><tr><th>Client</th><th>Department</th><th>Tray</th><th>Last Visit</th><th>Days Since</th><th>Tech</th><th>Status</th></tr></thead>
+            <tbody id="gapTableBody"><tr><td colspan="7" style="text-align:center;padding:24px;color:var(--muted)">Loading...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="report-panel" id="rpt-customer-value">
+        <div class="cv-client-wrap">
+          <select class="cv-client-select" id="cvClientSelect" onchange="loadCustomerValue()">
+            <option value="">— Select a Client —</option>
+          </select>
+          <button class="btn-print" onclick="window.print()">
+            <svg viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+            Print
+          </button>
+        </div>
+        <div id="cvContent"><div class="empty"><p>Select a client to view their value report</p></div></div>
+      </div>
     </div>
 
   </div>
@@ -621,6 +707,8 @@ function populateClientDropdowns() {
     clients.map(c => `<option value="${c.ClientKey}">${c.ClientName}</option>`).join('');
   document.getElementById('calClient').innerHTML = opts;
   document.getElementById('nvClient').innerHTML = opts;
+  const cvOpts = '<option value="">— Select a Client —</option>' + clients.map(c => `<option value="${c.ClientKey}">${c.ClientName}</option>`).join('');
+  document.getElementById('cvClientSelect').innerHTML = cvOpts;
 }
 
 function loadCalDepts() {
@@ -647,6 +735,7 @@ function switchView(name) {
   document.querySelector(`[data-view="${name}"]`)?.classList.add('active');
   document.getElementById('detailTab').style.display = name === 'detail' ? 'flex' : 'none';
   if (name === 'services') loadServices();
+  if (name === 'reports') loadReports();
   if (name !== 'detail') expandedTrayKey = null;
 }
 
@@ -1778,6 +1867,123 @@ function showToast(msg, type = '') {
   t.className = `toast ${type} show`;
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+// ── REPORTS ──────────────────────────────────────────────────────────────────
+let gapData = [];
+let gapThreshold = 30;
+
+function switchReportTab(name, btn) {
+  document.querySelectorAll('.report-subtab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.report-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('rpt-' + name).classList.add('active');
+}
+
+async function loadReports() {
+  await loadGapReport();
+}
+
+async function loadGapReport() {
+  document.getElementById('gapTableBody').innerHTML = '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--muted)">Loading...</td></tr>';
+  const data = await fetch('/api/reports/tray-gap').then(r => r.json());
+  gapData = data;
+  renderGapTable(gapData);
+}
+
+function setGapThreshold(btn, days) {
+  gapThreshold = days;
+  document.querySelectorAll('#segGapThreshold .rpt-seg-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  filterGapReport();
+}
+
+function filterGapReport() {
+  const q = document.getElementById('gapSearch').value.toLowerCase();
+  let rows = gapData;
+  if (gapThreshold > 0) rows = rows.filter(r => r.DaysSince >= gapThreshold);
+  if (q) rows = rows.filter(r => r.ClientName.toLowerCase().includes(q));
+  renderGapTable(rows);
+}
+
+function gapChip(days) {
+  if (days >= 9999) return `<span class="gap-chip gap-red">Never</span>`;
+  if (days < 30) return `<span class="gap-chip gap-green">${days}d</span>`;
+  if (days < 60) return `<span class="gap-chip gap-amber">${days}d</span>`;
+  return `<span class="gap-chip gap-red">${days}d</span>`;
+}
+
+function renderGapTable(rows) {
+  if (!rows.length) {
+    document.getElementById('gapTableBody').innerHTML = '<tr><td colspan="7" style="text-align:center;padding:32px;color:var(--muted)">No trays match the current filter</td></tr>';
+    return;
+  }
+  document.getElementById('gapTableBody').innerHTML = rows.map(r => `
+    <tr>
+      <td>${r.ClientName}</td>
+      <td class="muted">${r.DepartmentName}</td>
+      <td style="font-weight:600">${r.TrayName}</td>
+      <td class="muted">${r.LastVisit ? new Date(r.LastVisit+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '—'}</td>
+      <td>${r.DaysSince >= 9999 ? '—' : r.DaysSince}</td>
+      <td class="muted">${r.TechnicianName || '—'}</td>
+      <td>${gapChip(r.DaysSince)}</td>
+    </tr>`).join('');
+}
+
+function exportGapCSV() {
+  const q = document.getElementById('gapSearch').value.toLowerCase();
+  let rows = gapData;
+  if (gapThreshold > 0) rows = rows.filter(r => r.DaysSince >= gapThreshold);
+  if (q) rows = rows.filter(r => r.ClientName.toLowerCase().includes(q));
+  const header = ['Client','Department','Tray Name','Last Visit','Days Since','Tech','Status'];
+  const lines = [header, ...rows.map(r => [
+    r.ClientName, r.DepartmentName, r.TrayName,
+    r.LastVisit || '', r.DaysSince >= 9999 ? 'Never' : r.DaysSince,
+    r.TechnicianName || '',
+    r.DaysSince < 30 ? 'Green' : r.DaysSince < 60 ? 'Amber' : 'Red'
+  ])].map(row => row.map(v => `"${String(v).replace(/"/g,'""')}"`).join(','));
+  const blob = new Blob([lines.join('\n')], { type: 'text/csv' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `tray-gap-${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+}
+
+async function loadCustomerValue() {
+  const clientId = document.getElementById('cvClientSelect').value;
+  if (!clientId) {
+    document.getElementById('cvContent').innerHTML = '<div class="empty"><p>Select a client to view their value report</p></div>';
+    return;
+  }
+  document.getElementById('cvContent').innerHTML = '<div class="loading"><div class="spinner"></div>Loading...</div>';
+  const data = await fetch(`/api/reports/customer-value?clientId=${clientId}`).then(r => r.json());
+  renderCustomerValue(data);
+}
+
+function renderCustomerValue(data) {
+  const k = data.kpis;
+  const fmt = n => '$' + Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  const kpiHtml = `<div class="cv-kpi-strip">
+    <div class="cv-kpi"><span class="cv-kpi-val">${k.TotalVisits}</span><span class="cv-kpi-lbl">Visits</span></div>
+    <div class="cv-kpi"><span class="cv-kpi-val">${k.TotalInstruments}</span><span class="cv-kpi-lbl">Instruments</span></div>
+    <div class="cv-kpi"><span class="cv-kpi-val">${k.TotalRepaired}</span><span class="cv-kpi-lbl">Repaired &amp; Inspected</span></div>
+    <div class="cv-kpi"><span class="cv-kpi-val">${k.TotalBER}</span><span class="cv-kpi-lbl">BER</span></div>
+    <div class="cv-kpi"><span class="cv-kpi-val">${k.TotalSentToTSI}</span><span class="cv-kpi-lbl">Sent to TSI</span></div>
+    <div class="cv-kpi highlight"><span class="cv-kpi-val">${fmt(k.TotalValue)}</span><span class="cv-kpi-lbl">Value Delivered</span></div>
+  </div>`;
+  const visitRows = (data.visits || []).map(v => `<tr>
+    <td>${new Date(v.OnsiteDate+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</td>
+    <td class="muted">${v.DepartmentName}</td>
+    <td class="muted">${v.TechnicianName}</td>
+    <td style="text-align:center">${v.TrayCount}</td>
+    <td style="text-align:center">${v.TotalInstruments}</td>
+    <td style="text-align:center">${v.TotalRepaired}</td>
+    <td style="text-align:right;font-weight:700;color:var(--navy)">${fmt(v.Value)}</td>
+  </tr>`).join('');
+  document.getElementById('cvContent').innerHTML = kpiHtml + `<div class="rpt-table-wrap"><table class="rpt-table">
+    <thead><tr><th>Date</th><th>Dept</th><th>Tech</th><th style="text-align:center">Trays</th><th style="text-align:center">Instruments</th><th style="text-align:center">Repaired</th><th style="text-align:right">Value</th></tr></thead>
+    <tbody>${visitRows || '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--muted)">No submitted visits for this client</td></tr>'}</tbody>
+  </table></div>`;
 }
 
 // ── BOOT ──────────────────────────────────────────────────────────────────────

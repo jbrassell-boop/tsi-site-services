@@ -469,4 +469,83 @@ app.delete('/api/tray-templates/:id', (req, res) => {
   res.json({ success: true });
 });
 
+// ── REPORTS ──────────────────────────────────────────────────────────────────
+
+app.get('/api/reports/tray-gap', (req, res) => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const trayMap = new Map();
+
+  trays.forEach(tray => {
+    const svc = siteServices.find(s => s.SiteServiceKey === tray.SiteServiceKey);
+    if (!svc) return;
+    const key = `${svc.ClientKey}|${svc.DepartmentKey}|${tray.TrayName}`;
+    const existing = trayMap.get(key);
+    if (!existing || svc.OnsiteDate > existing.LastVisit) {
+      trayMap.set(key, {
+        ClientKey: svc.ClientKey, ClientName: svc.ClientName,
+        DepartmentKey: svc.DepartmentKey, DepartmentName: svc.DepartmentName,
+        TrayName: tray.TrayName, LastVisit: svc.OnsiteDate, TechnicianName: svc.TechnicianName,
+      });
+    }
+  });
+
+  trayTemplates.forEach(tmpl => {
+    const key = `${tmpl.ClientKey}|${tmpl.DepartmentKey}|${tmpl.TrayName}`;
+    if (!trayMap.has(key)) {
+      const client = clients.find(c => c.ClientKey === tmpl.ClientKey);
+      const dept = departments.find(d => d.DepartmentKey === tmpl.DepartmentKey);
+      trayMap.set(key, {
+        ClientKey: tmpl.ClientKey, ClientName: client ? client.ClientName : '—',
+        DepartmentKey: tmpl.DepartmentKey, DepartmentName: dept ? dept.DepartmentName : '—',
+        TrayName: tmpl.TrayName, LastVisit: null, TechnicianName: null,
+      });
+    }
+  });
+
+  const rows = [...trayMap.values()].map(r => {
+    const daysSince = r.LastVisit
+      ? Math.floor((today - new Date(r.LastVisit + 'T00:00:00')) / 86400000)
+      : 9999;
+    return { ...r, DaysSince: daysSince };
+  }).sort((a, b) => b.DaysSince - a.DaysSince);
+
+  res.json(rows);
+});
+
+app.get('/api/reports/customer-value', (req, res) => {
+  const clientId = parseInt(req.query.clientId);
+  if (!clientId) return res.status(400).json({ error: 'clientId required' });
+
+  const clientSvcs = siteServices
+    .filter(s => s.ClientKey === clientId && s.Status === 'submitted')
+    .sort((a, b) => a.OnsiteDate.localeCompare(b.OnsiteDate));
+
+  let totInstr = 0, totRep = 0, totBER = 0, totSent = 0, totValue = 0;
+
+  const visits = clientSvcs.map(svc => {
+    const svcTrays = trays.filter(t => t.SiteServiceKey === svc.SiteServiceKey);
+    const svcItems = svcTrays.flatMap(t => trayItems.filter(i => i.TrayKey === t.TrayKey));
+    let vInstr = 0, vRep = 0, vBER = 0, vSent = 0, vValue = 0;
+    svcItems.forEach(i => {
+      vInstr += i.TotalCount; vRep += i.RepairedCount;
+      vBER += i.BERCount; vSent += i.SentToTSICount;
+      vValue += i.RepairedCount * i.UnitPrice;
+    });
+    totInstr += vInstr; totRep += vRep; totBER += vBER; totSent += vSent; totValue += vValue;
+    return {
+      SiteServiceKey: svc.SiteServiceKey, OnsiteDate: svc.OnsiteDate,
+      DepartmentName: svc.DepartmentName, TechnicianName: svc.TechnicianName,
+      TrayCount: svcTrays.length, TotalInstruments: vInstr, TotalRepaired: vRep, Value: vValue,
+    };
+  });
+
+  res.json({
+    ClientKey: clientId,
+    ClientName: clients.find(c => c.ClientKey === clientId)?.ClientName || '—',
+    kpis: { TotalVisits: clientSvcs.length, TotalInstruments: totInstr, TotalRepaired: totRep, TotalBER: totBER, TotalSentToTSI: totSent, TotalValue: totValue },
+    visits,
+  });
+});
+
 module.exports = app;
