@@ -72,6 +72,25 @@ const calendarEvents = [
   { EventKey: 12, ClientKey: 7148, ClientName: 'NCH Downtown Baker Hospital - FL',    DepartmentName: 'Central Sterile Processing', TechnicianKey: 204, EventDate: '2026-03-24', ServiceLocation: 'South' },
   { EventKey: 13, ClientKey: 7859, ClientName: 'Inspira Mullica Hill - NJ',           DepartmentName: 'Sterile Processing',         TechnicianKey: 204, EventDate: '2026-03-27', ServiceLocation: 'North' },
   { EventKey: 14, ClientKey: 6749, ClientName: 'Halifax Health UF Health - Deltona',  DepartmentName: 'Sterile Processing',         TechnicianKey: 204, EventDate: '2026-03-28', ServiceLocation: 'South' },
+  { EventKey: 15, ClientKey: 6183, ClientName: 'Wills Eye Hospital - PA',             DepartmentName: 'Central Sterile Processing', TechnicianKey: 204, EventDate: '2026-01-15', ServiceLocation: 'North' },
+  { EventKey: 16, ClientKey: 6183, ClientName: 'Wills Eye Hospital - PA',             DepartmentName: 'Central Sterile Processing', TechnicianKey: 204, EventDate: '2026-02-12', ServiceLocation: 'North' },
+  { EventKey: 17, ClientKey: 6183, ClientName: 'Wills Eye Hospital - PA',             DepartmentName: 'Central Sterile Processing', TechnicianKey: 204, EventDate: '2026-03-12', ServiceLocation: 'North' },
+  { EventKey: 18, ClientKey: 7859, ClientName: 'Inspira Medical Ctr - Mullica Hill',  DepartmentName: 'Sterile Processing',         TechnicianKey: 204, EventDate: '2026-02-26', ServiceLocation: 'North' },
+  { EventKey: 19, ClientKey: 7859, ClientName: 'Inspira Medical Ctr - Mullica Hill',  DepartmentName: 'Sterile Processing',         TechnicianKey: 204, EventDate: '2026-03-19', ServiceLocation: 'North' },
+  { EventKey: 20, ClientKey: 7859, ClientName: 'Inspira Medical Ctr - Mullica Hill',  DepartmentName: 'Sterile Processing',         TechnicianKey: 204, EventDate: '2026-04-09', ServiceLocation: 'North' },
+  { EventKey: 21, ClientKey: 7851, ClientName: 'HCA Florida Brandon Hospital',        DepartmentName: 'Central Sterile Processing', TechnicianKey: 208, EventDate: '2026-01-22', ServiceLocation: 'South' },
+  { EventKey: 22, ClientKey: 7851, ClientName: 'HCA Florida Brandon Hospital',        DepartmentName: 'Central Sterile Processing', TechnicianKey: 208, EventDate: '2026-02-19', ServiceLocation: 'South' },
+  { EventKey: 23, ClientKey: 7851, ClientName: 'HCA Florida Brandon Hospital',        DepartmentName: 'Central Sterile Processing', TechnicianKey: 208, EventDate: '2026-03-21', ServiceLocation: 'South' },
+  { EventKey: 24, ClientKey: 7148, ClientName: 'NCH Downtown Baker Hospital - FL',    DepartmentName: 'Central Sterile Processing', TechnicianKey: 208, EventDate: '2026-02-05', ServiceLocation: 'South' },
+  { EventKey: 25, ClientKey: 7148, ClientName: 'NCH Downtown Baker Hospital - FL',    DepartmentName: 'Central Sterile Processing', TechnicianKey: 208, EventDate: '2026-03-05', ServiceLocation: 'South' },
+  { EventKey: 26, ClientKey: 7148, ClientName: 'NCH Downtown Baker Hospital - FL',    DepartmentName: 'Central Sterile Processing', TechnicianKey: 208, EventDate: '2026-04-02', ServiceLocation: 'South' },
+  { EventKey: 27, ClientKey: 3544, ClientName: 'Walter Reed National Military Med',   DepartmentName: 'Surgical Services',         TechnicianKey: 215, EventDate: '2026-02-03', ServiceLocation: 'North' },
+  { EventKey: 28, ClientKey: 4758, ClientName: 'NCH North Naples Hospital',           DepartmentName: 'Central Sterile Processing', TechnicianKey: 215, EventDate: '2026-02-18', ServiceLocation: 'South' },
+  { EventKey: 29, ClientKey: 4758, ClientName: 'NCH North Naples Hospital',           DepartmentName: 'Central Sterile Processing', TechnicianKey: 215, EventDate: '2026-03-18', ServiceLocation: 'South' },
+  { EventKey: 30, ClientKey: 3703, ClientName: 'Inspira Medical Ctr - Vineland',      DepartmentName: 'Central Sterile Processing', TechnicianKey: 189, EventDate: '2026-02-24', ServiceLocation: 'North' },
+  { EventKey: 31, ClientKey: 3703, ClientName: 'Inspira Medical Ctr - Vineland',      DepartmentName: 'Central Sterile Processing', TechnicianKey: 189, EventDate: '2026-03-24', ServiceLocation: 'North' },
+  { EventKey: 32, ClientKey: 6509, ClientName: 'HCA Florida South Tampa Hospital',    DepartmentName: 'Sterile Processing',         TechnicianKey: 189, EventDate: '2026-04-11', ServiceLocation: 'South' },
+  { EventKey: 33, ClientKey: 8014, ClientName: 'BayCare Surgery Ctr (Trinity) - FL',  DepartmentName: 'Sterile Processing',        TechnicianKey: 204, EventDate: '2026-04-05', ServiceLocation: 'South' },
 ];
 
 const siteServices = [
@@ -81,6 +100,22 @@ const siteServices = [
   { SiteServiceKey: 104, ClientKey: 3544, ClientName: 'Walter Reed National Military Med', DepartmentKey: 9361, DepartmentName: 'Surgical Services', TechnicianKey: 215, TechnicianName: 'Tim Reese', OnsiteDate: '2026-03-04', DateSubmitted: '2026-03-04', Status: 'submitted', PurchaseOrder: 'WR-2026-091', WorkOrder: 'WO-2026-0298', ServiceLocation: 'North', Address: '8901 Wisconsin Ave', CityStateZip: 'Bethesda, MD 20889', PriceClass: 'Standard Onsite Service', TruckNumber: '003', StartTime: '07:00', EndTime: '15:00', Notes: 'Good visit. Facility requested quarterly review.', TrayCount: 5, CalcedCost: 269.50 },
   { SiteServiceKey: 105, ClientKey: 6183, ClientName: 'Wills Eye Hospital - PA', DepartmentKey: 9365, DepartmentName: 'Central Sterile Processing', TechnicianKey: 204, TechnicianName: 'Allen Martello', OnsiteDate: '2026-03-12', DateSubmitted: null, Status: 'draft', PurchaseOrder: '', WorkOrder: '', ServiceLocation: 'North', Address: '840 Walnut St', CityStateZip: 'Philadelphia, PA 19107', PriceClass: 'Standard Onsite Service', TruckNumber: '004', StartTime: '', EndTime: '', Notes: '', TrayCount: 0, CalcedCost: 0 },
   { SiteServiceKey: 106, ClientKey: 7851, ClientName: 'HCA Florida Brandon Hospital', DepartmentKey: 9367, DepartmentName: 'Central Sterile Processing', TechnicianKey: 208, TechnicianName: 'Bill Hurd', OnsiteDate: '2026-03-21', DateSubmitted: null, Status: 'draft', PurchaseOrder: '', WorkOrder: '', ServiceLocation: 'South', Address: '119 Oakfield Dr', CityStateZip: 'Brandon, FL 33511', PriceClass: 'Standard Onsite Service', TruckNumber: '002', StartTime: '', EndTime: '', Notes: '', TrayCount: 0, CalcedCost: 0 },
+  // Allen Martello visits
+  { SiteServiceKey: 107, ClientKey: 6183, ClientName: 'Wills Eye Hospital - PA', DepartmentKey: 9365, DepartmentName: 'Central Sterile Processing', TechnicianKey: 204, TechnicianName: 'Allen Martello', OnsiteDate: '2026-01-15', DateSubmitted: '2026-01-15', Status: 'submitted', PurchaseOrder: 'WE-2026-001', WorkOrder: 'WO-2026-0201', ServiceLocation: 'North', Address: '840 Walnut St', CityStateZip: 'Philadelphia, PA 19107', PriceClass: 'Standard Onsite Service', TruckNumber: '004', StartTime: '08:30', EndTime: '13:00', Notes: '', TrayCount: 3, CalcedCost: 0 },
+  { SiteServiceKey: 108, ClientKey: 6183, ClientName: 'Wills Eye Hospital - PA', DepartmentKey: 9365, DepartmentName: 'Central Sterile Processing', TechnicianKey: 204, TechnicianName: 'Allen Martello', OnsiteDate: '2026-02-12', DateSubmitted: '2026-02-12', Status: 'submitted', PurchaseOrder: 'WE-2026-002', WorkOrder: 'WO-2026-0244', ServiceLocation: 'North', Address: '840 Walnut St', CityStateZip: 'Philadelphia, PA 19107', PriceClass: 'Standard Onsite Service', TruckNumber: '004', StartTime: '08:30', EndTime: '13:30', Notes: 'Kerrison rongeur showing wear — flagged.', TrayCount: 3, CalcedCost: 0 },
+  { SiteServiceKey: 109, ClientKey: 7859, ClientName: 'Inspira Medical Ctr - Mullica Hill - NJ', DepartmentKey: 9363, DepartmentName: 'Sterile Processing', TechnicianKey: 204, TechnicianName: 'Allen Martello', OnsiteDate: '2026-02-26', DateSubmitted: '2026-02-26', Status: 'submitted', PurchaseOrder: '', WorkOrder: 'WO-2026-0267', ServiceLocation: 'North', Address: '3 Inspira Dr', CityStateZip: 'Mullica Hill, NJ 08062', PriceClass: 'Standard Onsite Service', TruckNumber: '004', StartTime: '09:00', EndTime: '14:00', Notes: '', TrayCount: 2, CalcedCost: 0 },
+  { SiteServiceKey: 110, ClientKey: 7859, ClientName: 'Inspira Medical Ctr - Mullica Hill - NJ', DepartmentKey: 9363, DepartmentName: 'Sterile Processing', TechnicianKey: 204, TechnicianName: 'Allen Martello', OnsiteDate: '2026-03-19', DateSubmitted: '2026-03-19', Status: 'submitted', PurchaseOrder: '', WorkOrder: 'WO-2026-0301', ServiceLocation: 'North', Address: '3 Inspira Dr', CityStateZip: 'Mullica Hill, NJ 08062', PriceClass: 'Standard Onsite Service', TruckNumber: '004', StartTime: '09:00', EndTime: '13:30', Notes: 'Repeat BER on pituitary rongeur.', TrayCount: 2, CalcedCost: 0 },
+  // Bill Hurd visits
+  { SiteServiceKey: 111, ClientKey: 7851, ClientName: 'HCA Florida Brandon Hospital', DepartmentKey: 9367, DepartmentName: 'Central Sterile Processing', TechnicianKey: 208, TechnicianName: 'Bill Hurd', OnsiteDate: '2026-01-22', DateSubmitted: '2026-01-22', Status: 'submitted', PurchaseOrder: 'HCA-B-001', WorkOrder: 'WO-2026-0188', ServiceLocation: 'South', Address: '119 Oakfield Dr', CityStateZip: 'Brandon, FL 33511', PriceClass: 'Standard Onsite Service', TruckNumber: '002', StartTime: '07:30', EndTime: '14:00', Notes: '', TrayCount: 3, CalcedCost: 0 },
+  { SiteServiceKey: 112, ClientKey: 7851, ClientName: 'HCA Florida Brandon Hospital', DepartmentKey: 9367, DepartmentName: 'Central Sterile Processing', TechnicianKey: 208, TechnicianName: 'Bill Hurd', OnsiteDate: '2026-02-19', DateSubmitted: '2026-02-19', Status: 'submitted', PurchaseOrder: 'HCA-B-002', WorkOrder: 'WO-2026-0252', ServiceLocation: 'South', Address: '119 Oakfield Dr', CityStateZip: 'Brandon, FL 33511', PriceClass: 'Standard Onsite Service', TruckNumber: '002', StartTime: '07:30', EndTime: '14:30', Notes: 'Same scissors flagged as BER again.', TrayCount: 3, CalcedCost: 0 },
+  { SiteServiceKey: 113, ClientKey: 7148, ClientName: 'NCH Downtown Baker Hospital - FL', DepartmentKey: 9368, DepartmentName: 'Central Sterile Processing', TechnicianKey: 208, TechnicianName: 'Bill Hurd', OnsiteDate: '2026-02-05', DateSubmitted: '2026-02-05', Status: 'submitted', PurchaseOrder: 'NCH-2026-01', WorkOrder: 'WO-2026-0225', ServiceLocation: 'South', Address: '350 7th St N', CityStateZip: 'Naples, FL 34102', PriceClass: 'Standard Onsite Service', TruckNumber: '002', StartTime: '08:00', EndTime: '15:00', Notes: '', TrayCount: 2, CalcedCost: 0 },
+  { SiteServiceKey: 114, ClientKey: 7148, ClientName: 'NCH Downtown Baker Hospital - FL', DepartmentKey: 9368, DepartmentName: 'Central Sterile Processing', TechnicianKey: 208, TechnicianName: 'Bill Hurd', OnsiteDate: '2026-03-05', DateSubmitted: '2026-03-05', Status: 'submitted', PurchaseOrder: 'NCH-2026-02', WorkOrder: 'WO-2026-0280', ServiceLocation: 'South', Address: '350 7th St N', CityStateZip: 'Naples, FL 34102', PriceClass: 'Standard Onsite Service', TruckNumber: '002', StartTime: '08:00', EndTime: '14:30', Notes: 'Rongeur - Kerrison BERd again — 3rd time this quarter.', TrayCount: 2, CalcedCost: 0 },
+  // Tim Reese additional visits
+  { SiteServiceKey: 115, ClientKey: 3544, ClientName: 'Walter Reed National Military Med', DepartmentKey: 9361, DepartmentName: 'Surgical Services', TechnicianKey: 215, TechnicianName: 'Tim Reese', OnsiteDate: '2026-02-03', DateSubmitted: '2026-02-03', Status: 'submitted', PurchaseOrder: 'WR-2026-082', WorkOrder: 'WO-2026-0219', ServiceLocation: 'North', Address: '8901 Wisconsin Ave', CityStateZip: 'Bethesda, MD 20889', PriceClass: 'Standard Onsite Service', TruckNumber: '003', StartTime: '07:00', EndTime: '15:30', Notes: '', TrayCount: 4, CalcedCost: 0 },
+  { SiteServiceKey: 116, ClientKey: 4758, ClientName: 'NCH North Naples Hospital', DepartmentKey: 9374, DepartmentName: 'Central Sterile Processing', TechnicianKey: 215, TechnicianName: 'Tim Reese', OnsiteDate: '2026-02-18', DateSubmitted: '2026-02-18', Status: 'submitted', PurchaseOrder: 'NCH-N-001', WorkOrder: 'WO-2026-0249', ServiceLocation: 'South', Address: '11190 Health Park Blvd', CityStateZip: 'Naples, FL 34110', PriceClass: 'Standard Onsite Service', TruckNumber: '003', StartTime: '08:00', EndTime: '14:00', Notes: '', TrayCount: 3, CalcedCost: 0 },
+  // Charles Kaufman additional visit
+  { SiteServiceKey: 117, ClientKey: 3703, ClientName: 'Inspira Medical Ctr - Vineland', DepartmentKey: 9362, DepartmentName: 'Central Sterile Processing', TechnicianKey: 189, TechnicianName: 'Charles Kaufman', OnsiteDate: '2026-02-24', DateSubmitted: '2026-02-24', Status: 'submitted', PurchaseOrder: '', WorkOrder: 'WO-2026-0261', ServiceLocation: 'North', Address: '1505 W Sherman Ave', CityStateZip: 'Vineland, NJ 08360', PriceClass: 'Standard Onsite Service', TruckNumber: '001', StartTime: '08:00', EndTime: '14:00', Notes: '', TrayCount: 3, CalcedCost: 0 },
+  { SiteServiceKey: 118, ClientKey: 3703, ClientName: 'Inspira Medical Ctr - Vineland', DepartmentKey: 9362, DepartmentName: 'Central Sterile Processing', TechnicianKey: 189, TechnicianName: 'Charles Kaufman', OnsiteDate: '2026-03-24', DateSubmitted: '2026-03-24', Status: 'submitted', PurchaseOrder: '', WorkOrder: 'WO-2026-0318', ServiceLocation: 'North', Address: '1505 W Sherman Ave', CityStateZip: 'Vineland, NJ 08360', PriceClass: 'Standard Onsite Service', TruckNumber: '001', StartTime: '08:00', EndTime: '13:30', Notes: 'Scissors - Serrated flagged BER second visit in a row.', TrayCount: 3, CalcedCost: 0 },
 ];
 
 const instrumentTypes = [
@@ -201,6 +236,51 @@ const trays = [
   { TrayKey: 5, SiteServiceKey: 104, TrayName: 'Scope Tray 3' },
   { TrayKey: 6, SiteServiceKey: 104, TrayName: 'OR Tray A' },
   { TrayKey: 7, SiteServiceKey: 104, TrayName: 'OR Tray B' },
+  // SiteService 107 (Wills Eye Jan)
+  { TrayKey: 8,  SiteServiceKey: 107, TrayName: 'Eye Tray A' },
+  { TrayKey: 9,  SiteServiceKey: 107, TrayName: 'Eye Tray B' },
+  { TrayKey: 10, SiteServiceKey: 107, TrayName: 'Micro Tray' },
+  // SiteService 108 (Wills Eye Feb)
+  { TrayKey: 11, SiteServiceKey: 108, TrayName: 'Eye Tray A' },
+  { TrayKey: 12, SiteServiceKey: 108, TrayName: 'Eye Tray B' },
+  { TrayKey: 13, SiteServiceKey: 108, TrayName: 'Micro Tray' },
+  // SiteService 109 (Mullica Hill Feb)
+  { TrayKey: 14, SiteServiceKey: 109, TrayName: 'OR Tray 1' },
+  { TrayKey: 15, SiteServiceKey: 109, TrayName: 'OR Tray 2' },
+  // SiteService 110 (Mullica Hill Mar)
+  { TrayKey: 16, SiteServiceKey: 110, TrayName: 'OR Tray 1' },
+  { TrayKey: 17, SiteServiceKey: 110, TrayName: 'OR Tray 2' },
+  // SiteService 111 (Brandon Jan)
+  { TrayKey: 18, SiteServiceKey: 111, TrayName: 'General Tray A' },
+  { TrayKey: 19, SiteServiceKey: 111, TrayName: 'General Tray B' },
+  { TrayKey: 20, SiteServiceKey: 111, TrayName: 'Laparoscopic Tray' },
+  // SiteService 112 (Brandon Feb)
+  { TrayKey: 21, SiteServiceKey: 112, TrayName: 'General Tray A' },
+  { TrayKey: 22, SiteServiceKey: 112, TrayName: 'General Tray B' },
+  { TrayKey: 23, SiteServiceKey: 112, TrayName: 'Laparoscopic Tray' },
+  // SiteService 113 (NCH Baker Feb)
+  { TrayKey: 24, SiteServiceKey: 113, TrayName: 'Neuro Tray 1' },
+  { TrayKey: 25, SiteServiceKey: 113, TrayName: 'Neuro Tray 2' },
+  // SiteService 114 (NCH Baker Mar)
+  { TrayKey: 26, SiteServiceKey: 114, TrayName: 'Neuro Tray 1' },
+  { TrayKey: 27, SiteServiceKey: 114, TrayName: 'Neuro Tray 2' },
+  // SiteService 115 (Walter Reed Feb)
+  { TrayKey: 28, SiteServiceKey: 115, TrayName: 'Scope Tray 1' },
+  { TrayKey: 29, SiteServiceKey: 115, TrayName: 'Scope Tray 2' },
+  { TrayKey: 30, SiteServiceKey: 115, TrayName: 'OR Tray A' },
+  { TrayKey: 31, SiteServiceKey: 115, TrayName: 'OR Tray B' },
+  // SiteService 116 (NCH North Naples Feb)
+  { TrayKey: 32, SiteServiceKey: 116, TrayName: 'General Tray 1' },
+  { TrayKey: 33, SiteServiceKey: 116, TrayName: 'General Tray 2' },
+  { TrayKey: 34, SiteServiceKey: 116, TrayName: 'Ortho Tray' },
+  // SiteService 117 (Vineland Feb)
+  { TrayKey: 35, SiteServiceKey: 117, TrayName: 'GI Scope Tray A' },
+  { TrayKey: 36, SiteServiceKey: 117, TrayName: 'GI Scope Tray B' },
+  { TrayKey: 37, SiteServiceKey: 117, TrayName: 'Lap Tray' },
+  // SiteService 118 (Vineland Mar)
+  { TrayKey: 38, SiteServiceKey: 118, TrayName: 'GI Scope Tray A' },
+  { TrayKey: 39, SiteServiceKey: 118, TrayName: 'GI Scope Tray B' },
+  { TrayKey: 40, SiteServiceKey: 118, TrayName: 'Lap Tray' },
 ];
 
 const trayItems = [
@@ -233,6 +313,123 @@ const trayItems = [
   { ItemKey: 27, TrayKey: 7, InstrumentType: 'Kocher Hemostat',             UnitPrice: 4.80, TotalCount: 3, RepairedCount: 2, SentToTSICount: 1, BERCount: 0 },
   { ItemKey: 28, TrayKey: 7, InstrumentType: 'Right Angle Clamp',           UnitPrice: 6.50, TotalCount: 2, RepairedCount: 2, SentToTSICount: 0, BERCount: 0 },
   { ItemKey: 29, TrayKey: 7, InstrumentType: 'Plain Thumb Forceps',         UnitPrice: 3.80, TotalCount: 1, RepairedCount: 1, SentToTSICount: 0, BERCount: 0 },
+  // Tray 8 - Wills Eye Jan, Eye Tray A
+  { ItemKey: 30, TrayKey: 8,  InstrumentType: 'Retractor - Opthalmic/Eye', UnitPrice: 18.98, TotalCount: 4, RepairedCount: 4, SentToTSICount: 0, BERCount: 0 },
+  { ItemKey: 31, TrayKey: 8,  InstrumentType: 'Speculum - Eye, Wire',      UnitPrice: 10.27, TotalCount: 3, RepairedCount: 2, SentToTSICount: 1, BERCount: 0 },
+  { ItemKey: 32, TrayKey: 8,  InstrumentType: 'Forcep - Micro, Jeweler',   UnitPrice:  8.22, TotalCount: 4, RepairedCount: 3, SentToTSICount: 0, BERCount: 1 },
+  // Tray 9 - Wills Eye Jan, Eye Tray B
+  { ItemKey: 33, TrayKey: 9,  InstrumentType: 'Scissors - Micro',          UnitPrice: 17.08, TotalCount: 3, RepairedCount: 3, SentToTSICount: 0, BERCount: 0 },
+  { ItemKey: 34, TrayKey: 9,  InstrumentType: 'Needle Holder - Micro',     UnitPrice: 11.39, TotalCount: 2, RepairedCount: 2, SentToTSICount: 0, BERCount: 0 },
+  { ItemKey: 35, TrayKey: 9,  InstrumentType: 'Rongeur - Kerrison',        UnitPrice: 28.46, TotalCount: 2, RepairedCount: 1, SentToTSICount: 0, BERCount: 1 },
+  // Tray 10 - Wills Eye Jan, Micro Tray
+  { ItemKey: 36, TrayKey: 10, InstrumentType: 'Forcep - Micro, Jeweler',   UnitPrice:  8.22, TotalCount: 5, RepairedCount: 4, SentToTSICount: 1, BERCount: 0 },
+  { ItemKey: 37, TrayKey: 10, InstrumentType: 'Knife - Micro',             UnitPrice: 12.32, TotalCount: 3, RepairedCount: 3, SentToTSICount: 0, BERCount: 0 },
+  // Tray 11 - Wills Eye Feb, Eye Tray A (same instruments — BER recurs)
+  { ItemKey: 38, TrayKey: 11, InstrumentType: 'Retractor - Opthalmic/Eye', UnitPrice: 18.98, TotalCount: 4, RepairedCount: 4, SentToTSICount: 0, BERCount: 0 },
+  { ItemKey: 39, TrayKey: 11, InstrumentType: 'Speculum - Eye, Wire',      UnitPrice: 10.27, TotalCount: 3, RepairedCount: 3, SentToTSICount: 0, BERCount: 0 },
+  { ItemKey: 40, TrayKey: 11, InstrumentType: 'Forcep - Micro, Jeweler',   UnitPrice:  8.22, TotalCount: 4, RepairedCount: 2, SentToTSICount: 0, BERCount: 2 },
+  // Tray 12 - Wills Eye Feb, Eye Tray B (Kerrison BERs again)
+  { ItemKey: 41, TrayKey: 12, InstrumentType: 'Scissors - Micro',          UnitPrice: 17.08, TotalCount: 3, RepairedCount: 3, SentToTSICount: 0, BERCount: 0 },
+  { ItemKey: 42, TrayKey: 12, InstrumentType: 'Needle Holder - Micro',     UnitPrice: 11.39, TotalCount: 2, RepairedCount: 2, SentToTSICount: 0, BERCount: 0 },
+  { ItemKey: 43, TrayKey: 12, InstrumentType: 'Rongeur - Kerrison',        UnitPrice: 28.46, TotalCount: 2, RepairedCount: 0, SentToTSICount: 0, BERCount: 2 },
+  // Tray 13 - Wills Eye Feb, Micro Tray
+  { ItemKey: 44, TrayKey: 13, InstrumentType: 'Forcep - Micro, Jeweler',   UnitPrice:  8.22, TotalCount: 5, RepairedCount: 5, SentToTSICount: 0, BERCount: 0 },
+  { ItemKey: 45, TrayKey: 13, InstrumentType: 'Knife - Micro',             UnitPrice: 12.32, TotalCount: 3, RepairedCount: 2, SentToTSICount: 1, BERCount: 0 },
+  // Tray 14 - Mullica Hill Feb, OR Tray 1
+  { ItemKey: 46, TrayKey: 14, InstrumentType: 'Needle Holder',             UnitPrice:  8.86, TotalCount: 4, RepairedCount: 4, SentToTSICount: 0, BERCount: 0 },
+  { ItemKey: 47, TrayKey: 14, InstrumentType: 'Scissors - General, Curved',UnitPrice:  6.33, TotalCount: 3, RepairedCount: 3, SentToTSICount: 0, BERCount: 0 },
+  { ItemKey: 48, TrayKey: 14, InstrumentType: 'Rongeur - Pituitary',       UnitPrice: 27.07, TotalCount: 2, RepairedCount: 1, SentToTSICount: 0, BERCount: 1 },
+  // Tray 15 - Mullica Hill Feb, OR Tray 2
+  { ItemKey: 49, TrayKey: 15, InstrumentType: 'Clamp - Hemo, Kelly, Allis, Peon, Crile', UnitPrice: 5.06, TotalCount: 6, RepairedCount: 5, SentToTSICount: 1, BERCount: 0 },
+  { ItemKey: 50, TrayKey: 15, InstrumentType: 'Retractor - Hand Held',     UnitPrice:  5.69, TotalCount: 3, RepairedCount: 3, SentToTSICount: 0, BERCount: 0 },
+  // Tray 16 - Mullica Hill Mar, OR Tray 1 (Pituitary Rongeur BERs again)
+  { ItemKey: 51, TrayKey: 16, InstrumentType: 'Needle Holder',             UnitPrice:  8.86, TotalCount: 4, RepairedCount: 4, SentToTSICount: 0, BERCount: 0 },
+  { ItemKey: 52, TrayKey: 16, InstrumentType: 'Scissors - General, Curved',UnitPrice:  6.33, TotalCount: 3, RepairedCount: 2, SentToTSICount: 1, BERCount: 0 },
+  { ItemKey: 53, TrayKey: 16, InstrumentType: 'Rongeur - Pituitary',       UnitPrice: 27.07, TotalCount: 2, RepairedCount: 0, SentToTSICount: 0, BERCount: 2 },
+  // Tray 17 - Mullica Hill Mar, OR Tray 2
+  { ItemKey: 54, TrayKey: 17, InstrumentType: 'Clamp - Hemo, Kelly, Allis, Peon, Crile', UnitPrice: 5.06, TotalCount: 6, RepairedCount: 6, SentToTSICount: 0, BERCount: 0 },
+  { ItemKey: 55, TrayKey: 17, InstrumentType: 'Retractor - Hand Held',     UnitPrice:  5.69, TotalCount: 3, RepairedCount: 2, SentToTSICount: 1, BERCount: 0 },
+  // Tray 18 - Brandon Jan, General Tray A
+  { ItemKey: 56, TrayKey: 18, InstrumentType: 'Scissors - Serrated, Supercut', UnitPrice: 10.12, TotalCount: 3, RepairedCount: 3, SentToTSICount: 0, BERCount: 0 },
+  { ItemKey: 57, TrayKey: 18, InstrumentType: 'Needle Holder',             UnitPrice:  8.86, TotalCount: 4, RepairedCount: 4, SentToTSICount: 0, BERCount: 0 },
+  { ItemKey: 58, TrayKey: 18, InstrumentType: 'Forcep - General',          UnitPrice:  4.43, TotalCount: 5, RepairedCount: 4, SentToTSICount: 1, BERCount: 0 },
+  // Tray 19 - Brandon Jan, General Tray B
+  { ItemKey: 59, TrayKey: 19, InstrumentType: 'Rongeur - Kerrison',        UnitPrice: 28.46, TotalCount: 2, RepairedCount: 2, SentToTSICount: 0, BERCount: 0 },
+  { ItemKey: 60, TrayKey: 19, InstrumentType: 'Retractor - Self Retaining', UnitPrice: 14.55, TotalCount: 2, RepairedCount: 2, SentToTSICount: 0, BERCount: 0 },
+  { ItemKey: 61, TrayKey: 19, InstrumentType: 'Scissors - TC',             UnitPrice: 19.02, TotalCount: 2, RepairedCount: 1, SentToTSICount: 0, BERCount: 1 },
+  // Tray 20 - Brandon Jan, Laparoscopic
+  { ItemKey: 62, TrayKey: 20, InstrumentType: 'Trocar',                    UnitPrice:  8.86, TotalCount: 3, RepairedCount: 3, SentToTSICount: 0, BERCount: 0 },
+  { ItemKey: 63, TrayKey: 20, InstrumentType: 'Lap - Scissor',             UnitPrice: 18.34, TotalCount: 2, RepairedCount: 2, SentToTSICount: 0, BERCount: 0 },
+  // Tray 21 - Brandon Feb, General Tray A (Scissors - TC BERs again)
+  { ItemKey: 64, TrayKey: 21, InstrumentType: 'Scissors - Serrated, Supercut', UnitPrice: 10.12, TotalCount: 3, RepairedCount: 3, SentToTSICount: 0, BERCount: 0 },
+  { ItemKey: 65, TrayKey: 21, InstrumentType: 'Needle Holder',             UnitPrice:  8.86, TotalCount: 4, RepairedCount: 3, SentToTSICount: 1, BERCount: 0 },
+  { ItemKey: 66, TrayKey: 21, InstrumentType: 'Forcep - General',          UnitPrice:  4.43, TotalCount: 5, RepairedCount: 5, SentToTSICount: 0, BERCount: 0 },
+  // Tray 22 - Brandon Feb, General Tray B
+  { ItemKey: 67, TrayKey: 22, InstrumentType: 'Rongeur - Kerrison',        UnitPrice: 28.46, TotalCount: 2, RepairedCount: 2, SentToTSICount: 0, BERCount: 0 },
+  { ItemKey: 68, TrayKey: 22, InstrumentType: 'Retractor - Self Retaining', UnitPrice: 14.55, TotalCount: 2, RepairedCount: 2, SentToTSICount: 0, BERCount: 0 },
+  { ItemKey: 69, TrayKey: 22, InstrumentType: 'Scissors - TC',             UnitPrice: 19.02, TotalCount: 2, RepairedCount: 0, SentToTSICount: 0, BERCount: 2 },
+  // Tray 23 - Brandon Feb, Laparoscopic
+  { ItemKey: 70, TrayKey: 23, InstrumentType: 'Trocar',                    UnitPrice:  8.86, TotalCount: 3, RepairedCount: 2, SentToTSICount: 1, BERCount: 0 },
+  { ItemKey: 71, TrayKey: 23, InstrumentType: 'Lap - Scissor',             UnitPrice: 18.34, TotalCount: 2, RepairedCount: 2, SentToTSICount: 0, BERCount: 0 },
+  // Tray 24 - NCH Baker Feb, Neuro Tray 1
+  { ItemKey: 72, TrayKey: 24, InstrumentType: 'Rongeur - Kerrison',        UnitPrice: 28.46, TotalCount: 3, RepairedCount: 3, SentToTSICount: 0, BERCount: 0 },
+  { ItemKey: 73, TrayKey: 24, InstrumentType: 'Rongeur - Pituitary',       UnitPrice: 27.07, TotalCount: 2, RepairedCount: 2, SentToTSICount: 0, BERCount: 0 },
+  { ItemKey: 74, TrayKey: 24, InstrumentType: 'Curette - Micro',           UnitPrice: 10.82, TotalCount: 4, RepairedCount: 3, SentToTSICount: 1, BERCount: 0 },
+  // Tray 25 - NCH Baker Feb, Neuro Tray 2
+  { ItemKey: 75, TrayKey: 25, InstrumentType: 'Dissector',                 UnitPrice:  4.11, TotalCount: 3, RepairedCount: 3, SentToTSICount: 0, BERCount: 0 },
+  { ItemKey: 76, TrayKey: 25, InstrumentType: 'Elevator - Micro',          UnitPrice:  8.22, TotalCount: 2, RepairedCount: 1, SentToTSICount: 0, BERCount: 1 },
+  // Tray 26 - NCH Baker Mar, Neuro Tray 1 (Kerrison BERs again - 3rd time)
+  { ItemKey: 77, TrayKey: 26, InstrumentType: 'Rongeur - Kerrison',        UnitPrice: 28.46, TotalCount: 3, RepairedCount: 2, SentToTSICount: 0, BERCount: 1 },
+  { ItemKey: 78, TrayKey: 26, InstrumentType: 'Rongeur - Pituitary',       UnitPrice: 27.07, TotalCount: 2, RepairedCount: 1, SentToTSICount: 0, BERCount: 1 },
+  { ItemKey: 79, TrayKey: 26, InstrumentType: 'Curette - Micro',           UnitPrice: 10.82, TotalCount: 4, RepairedCount: 4, SentToTSICount: 0, BERCount: 0 },
+  // Tray 27 - NCH Baker Mar, Neuro Tray 2
+  { ItemKey: 80, TrayKey: 27, InstrumentType: 'Dissector',                 UnitPrice:  4.11, TotalCount: 3, RepairedCount: 3, SentToTSICount: 0, BERCount: 0 },
+  { ItemKey: 81, TrayKey: 27, InstrumentType: 'Elevator - Micro',          UnitPrice:  8.22, TotalCount: 2, RepairedCount: 2, SentToTSICount: 0, BERCount: 0 },
+  // Tray 28 - Walter Reed Feb, Scope Tray 1
+  { ItemKey: 82, TrayKey: 28, InstrumentType: 'Needle Holder - 6"',        UnitPrice:  8.86, TotalCount: 3, RepairedCount: 3, SentToTSICount: 0, BERCount: 0 },
+  { ItemKey: 83, TrayKey: 28, InstrumentType: 'Curved Mayo Scissors',      UnitPrice:  7.50, TotalCount: 2, RepairedCount: 2, SentToTSICount: 0, BERCount: 0 },
+  { ItemKey: 84, TrayKey: 28, InstrumentType: 'Kelly Hemostat - Straight', UnitPrice:  4.40, TotalCount: 3, RepairedCount: 2, SentToTSICount: 1, BERCount: 0 },
+  // Tray 29 - Walter Reed Feb, Scope Tray 2
+  { ItemKey: 85, TrayKey: 29, InstrumentType: 'Babcock Forceps',           UnitPrice:  5.50, TotalCount: 2, RepairedCount: 2, SentToTSICount: 0, BERCount: 0 },
+  { ItemKey: 86, TrayKey: 29, InstrumentType: 'Richardson Retractor',      UnitPrice:  9.80, TotalCount: 2, RepairedCount: 2, SentToTSICount: 0, BERCount: 0 },
+  // Tray 30 - Walter Reed Feb, OR Tray A
+  { ItemKey: 87, TrayKey: 30, InstrumentType: 'DeBakey Forceps - 8"',      UnitPrice:  7.40, TotalCount: 3, RepairedCount: 3, SentToTSICount: 0, BERCount: 0 },
+  { ItemKey: 88, TrayKey: 30, InstrumentType: 'Mayo-Hegar Needle Holder',  UnitPrice:  8.86, TotalCount: 3, RepairedCount: 2, SentToTSICount: 1, BERCount: 0 },
+  { ItemKey: 89, TrayKey: 30, InstrumentType: 'Curved Metzenbaum Scissors',UnitPrice:  9.20, TotalCount: 2, RepairedCount: 2, SentToTSICount: 0, BERCount: 0 },
+  // Tray 31 - Walter Reed Feb, OR Tray B
+  { ItemKey: 90, TrayKey: 31, InstrumentType: 'Right Angle Clamp',         UnitPrice:  6.50, TotalCount: 2, RepairedCount: 2, SentToTSICount: 0, BERCount: 0 },
+  { ItemKey: 91, TrayKey: 31, InstrumentType: 'Metzenbaum Scissors - Straight', UnitPrice: 9.20, TotalCount: 2, RepairedCount: 1, SentToTSICount: 0, BERCount: 1 },
+  // Tray 32 - NCH North Naples, General Tray 1
+  { ItemKey: 92, TrayKey: 32, InstrumentType: 'Clamp - Hemo, Kelly, Allis, Peon, Crile', UnitPrice: 5.06, TotalCount: 6, RepairedCount: 6, SentToTSICount: 0, BERCount: 0 },
+  { ItemKey: 93, TrayKey: 32, InstrumentType: 'Needle Holder',             UnitPrice:  8.86, TotalCount: 3, RepairedCount: 3, SentToTSICount: 0, BERCount: 0 },
+  { ItemKey: 94, TrayKey: 32, InstrumentType: 'Scissors - General, Curved',UnitPrice:  6.33, TotalCount: 3, RepairedCount: 2, SentToTSICount: 1, BERCount: 0 },
+  // Tray 33 - NCH North Naples, General Tray 2
+  { ItemKey: 95, TrayKey: 33, InstrumentType: 'Forcep - General',          UnitPrice:  4.43, TotalCount: 4, RepairedCount: 4, SentToTSICount: 0, BERCount: 0 },
+  { ItemKey: 96, TrayKey: 33, InstrumentType: 'Retractor - Double Ended',  UnitPrice:  7.00, TotalCount: 2, RepairedCount: 2, SentToTSICount: 0, BERCount: 0 },
+  // Tray 34 - NCH North Naples, Ortho Tray
+  { ItemKey: 97, TrayKey: 34, InstrumentType: 'Osteotome',                 UnitPrice:  6.62, TotalCount: 3, RepairedCount: 3, SentToTSICount: 0, BERCount: 0 },
+  { ItemKey: 98, TrayKey: 34, InstrumentType: 'Mallet',                    UnitPrice:  9.49, TotalCount: 2, RepairedCount: 2, SentToTSICount: 0, BERCount: 0 },
+  { ItemKey: 99, TrayKey: 34, InstrumentType: 'Bone Hook',                 UnitPrice:  7.59, TotalCount: 2, RepairedCount: 1, SentToTSICount: 1, BERCount: 0 },
+  // Tray 35 - Vineland Feb, GI Scope Tray A
+  { ItemKey: 100, TrayKey: 35, InstrumentType: 'Scissors - Serrated, Supercut', UnitPrice: 10.12, TotalCount: 3, RepairedCount: 3, SentToTSICount: 0, BERCount: 0 },
+  { ItemKey: 101, TrayKey: 35, InstrumentType: 'Needle Holder',            UnitPrice:  8.86, TotalCount: 3, RepairedCount: 3, SentToTSICount: 0, BERCount: 0 },
+  { ItemKey: 102, TrayKey: 35, InstrumentType: 'Clamp - Hemo, Kelly, Allis, Peon, Crile', UnitPrice: 5.06, TotalCount: 4, RepairedCount: 4, SentToTSICount: 0, BERCount: 0 },
+  // Tray 36 - Vineland Feb, GI Scope Tray B
+  { ItemKey: 103, TrayKey: 36, InstrumentType: 'DeBakey Forceps - 6"',     UnitPrice:  6.80, TotalCount: 2, RepairedCount: 2, SentToTSICount: 0, BERCount: 0 },
+  { ItemKey: 104, TrayKey: 36, InstrumentType: 'Curved Metzenbaum Scissors',UnitPrice: 9.20, TotalCount: 2, RepairedCount: 1, SentToTSICount: 1, BERCount: 0 },
+  // Tray 37 - Vineland Feb, Lap Tray
+  { ItemKey: 105, TrayKey: 37, InstrumentType: 'Trocar',                   UnitPrice:  8.86, TotalCount: 3, RepairedCount: 3, SentToTSICount: 0, BERCount: 0 },
+  { ItemKey: 106, TrayKey: 37, InstrumentType: 'Lap - Scissor',            UnitPrice: 18.34, TotalCount: 2, RepairedCount: 2, SentToTSICount: 0, BERCount: 0 },
+  // Tray 38 - Vineland Mar, GI Scope Tray A (Scissors - Serrated BERs)
+  { ItemKey: 107, TrayKey: 38, InstrumentType: 'Scissors - Serrated, Supercut', UnitPrice: 10.12, TotalCount: 3, RepairedCount: 2, SentToTSICount: 0, BERCount: 1 },
+  { ItemKey: 108, TrayKey: 38, InstrumentType: 'Needle Holder',            UnitPrice:  8.86, TotalCount: 3, RepairedCount: 3, SentToTSICount: 0, BERCount: 0 },
+  { ItemKey: 109, TrayKey: 38, InstrumentType: 'Clamp - Hemo, Kelly, Allis, Peon, Crile', UnitPrice: 5.06, TotalCount: 4, RepairedCount: 4, SentToTSICount: 0, BERCount: 0 },
+  // Tray 39 - Vineland Mar, GI Scope Tray B
+  { ItemKey: 110, TrayKey: 39, InstrumentType: 'DeBakey Forceps - 6"',     UnitPrice:  6.80, TotalCount: 2, RepairedCount: 2, SentToTSICount: 0, BERCount: 0 },
+  { ItemKey: 111, TrayKey: 39, InstrumentType: 'Curved Metzenbaum Scissors',UnitPrice: 9.20, TotalCount: 2, RepairedCount: 2, SentToTSICount: 0, BERCount: 0 },
+  // Tray 40 - Vineland Mar, Lap Tray
+  { ItemKey: 112, TrayKey: 40, InstrumentType: 'Trocar',                   UnitPrice:  8.86, TotalCount: 3, RepairedCount: 3, SentToTSICount: 0, BERCount: 0 },
+  { ItemKey: 113, TrayKey: 40, InstrumentType: 'Lap - Scissor',            UnitPrice: 18.34, TotalCount: 2, RepairedCount: 1, SentToTSICount: 1, BERCount: 0 },
 ];
 
 let documents = [];
@@ -269,6 +466,41 @@ let trayTemplates = [
     { InstrumentType: 'Kocher Hemostat',             UnitPrice: 4.80, DefaultCount: 3 },
     { InstrumentType: 'Right Angle Clamp',           UnitPrice: 6.50, DefaultCount: 2 },
     { InstrumentType: 'Plain Thumb Forceps',         UnitPrice: 3.80, DefaultCount: 1 },
+  ]},
+  { TemplateKey: 6, ClientKey: 6183, DepartmentKey: 9365, TrayName: 'Eye Tray A', Items: [
+    { InstrumentType: 'Retractor - Opthalmic/Eye', UnitPrice: 18.98, DefaultCount: 4 },
+    { InstrumentType: 'Speculum - Eye, Wire',       UnitPrice: 10.27, DefaultCount: 3 },
+    { InstrumentType: 'Forcep - Micro, Jeweler',    UnitPrice:  8.22, DefaultCount: 4 },
+  ]},
+  { TemplateKey: 7, ClientKey: 6183, DepartmentKey: 9365, TrayName: 'Eye Tray B', Items: [
+    { InstrumentType: 'Scissors - Micro',           UnitPrice: 17.08, DefaultCount: 3 },
+    { InstrumentType: 'Needle Holder - Micro',      UnitPrice: 11.39, DefaultCount: 2 },
+    { InstrumentType: 'Rongeur - Kerrison',         UnitPrice: 28.46, DefaultCount: 2 },
+  ]},
+  { TemplateKey: 8, ClientKey: 7851, DepartmentKey: 9367, TrayName: 'General Tray A', Items: [
+    { InstrumentType: 'Scissors - Serrated, Supercut', UnitPrice: 10.12, DefaultCount: 3 },
+    { InstrumentType: 'Needle Holder',              UnitPrice:  8.86, DefaultCount: 4 },
+    { InstrumentType: 'Forcep - General',           UnitPrice:  4.43, DefaultCount: 5 },
+  ]},
+  { TemplateKey: 9, ClientKey: 7148, DepartmentKey: 9368, TrayName: 'Neuro Tray 1', Items: [
+    { InstrumentType: 'Rongeur - Kerrison',         UnitPrice: 28.46, DefaultCount: 3 },
+    { InstrumentType: 'Rongeur - Pituitary',        UnitPrice: 27.07, DefaultCount: 2 },
+    { InstrumentType: 'Curette - Micro',            UnitPrice: 10.82, DefaultCount: 4 },
+  ]},
+  { TemplateKey: 10, ClientKey: 3703, DepartmentKey: 9362, TrayName: 'GI Scope Tray A', Items: [
+    { InstrumentType: 'Scissors - Serrated, Supercut', UnitPrice: 10.12, DefaultCount: 3 },
+    { InstrumentType: 'Needle Holder',              UnitPrice:  8.86, DefaultCount: 3 },
+    { InstrumentType: 'Clamp - Hemo, Kelly, Allis, Peon, Crile', UnitPrice: 5.06, DefaultCount: 4 },
+  ]},
+  { TemplateKey: 11, ClientKey: 6692, DepartmentKey: 9376, TrayName: 'Cardiac Tray A', Items: [
+    { InstrumentType: 'Clamp - Vascular',           UnitPrice:  6.96, DefaultCount: 4 },
+    { InstrumentType: 'Forcep - Titanium',          UnitPrice:  8.63, DefaultCount: 3 },
+    { InstrumentType: 'Scissors - Potts, Delicate', UnitPrice:  8.22, DefaultCount: 2 },
+  ]},
+  { TemplateKey: 12, ClientKey: 4758, DepartmentKey: 9374, TrayName: 'General Tray 1', Items: [
+    { InstrumentType: 'Clamp - Hemo, Kelly, Allis, Peon, Crile', UnitPrice: 5.06, DefaultCount: 6 },
+    { InstrumentType: 'Needle Holder',              UnitPrice:  8.86, DefaultCount: 3 },
+    { InstrumentType: 'Scissors - General, Curved', UnitPrice:  6.33, DefaultCount: 3 },
   ]},
 ];
 
