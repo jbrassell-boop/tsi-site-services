@@ -548,4 +548,150 @@ app.get('/api/reports/customer-value', (req, res) => {
   });
 });
 
+app.get('/api/reports/instrument-recurrence', (req, res) => {
+  // Map: clientKey|instrumentType -> { ClientName, InstrumentType, berCount, sentCount, visitCount, lastSeen }
+  const map = new Map();
+  trayItems.forEach(item => {
+    if (item.BERCount === 0 && item.SentToTSICount === 0) return;
+    const tray = trays.find(t => t.TrayKey === item.TrayKey);
+    if (!tray) return;
+    const svc = siteServices.find(s => s.SiteServiceKey === tray.SiteServiceKey);
+    if (!svc) return;
+    const key = `${svc.ClientKey}|${item.InstrumentType}`;
+    const existing = map.get(key);
+    if (!existing) {
+      map.set(key, { ClientKey: svc.ClientKey, ClientName: svc.ClientName, InstrumentType: item.InstrumentType, BERCount: item.BERCount, SentToTSICount: item.SentToTSICount, VisitCount: 1, LastSeen: svc.OnsiteDate });
+    } else {
+      existing.BERCount += item.BERCount;
+      existing.SentToTSICount += item.SentToTSICount;
+      existing.VisitCount += 1;
+      if (svc.OnsiteDate > existing.LastSeen) existing.LastSeen = svc.OnsiteDate;
+    }
+  });
+  const rows = [...map.values()]
+    .map(r => ({ ...r, TotalFlags: r.BERCount + r.SentToTSICount }))
+    .sort((a, b) => b.TotalFlags - a.TotalFlags);
+  res.json(rows);
+});
+
+app.get('/api/reports/visit-frequency', (req, res) => {
+  const map = new Map();
+  calendarEvents.forEach(ev => {
+    const key = ev.ClientKey;
+    if (!map.has(key)) map.set(key, { ClientKey: ev.ClientKey, ClientName: ev.ClientName, Scheduled: 0, Completed: 0 });
+    map.get(key).Scheduled += 1;
+  });
+  siteServices.filter(s => s.Status === 'submitted').forEach(s => {
+    if (!map.has(s.ClientKey)) map.set(s.ClientKey, { ClientKey: s.ClientKey, ClientName: s.ClientName, Scheduled: 0, Completed: 0 });
+    map.get(s.ClientKey).Completed += 1;
+  });
+  const rows = [...map.values()].map(r => ({
+    ...r,
+    CompletionRate: r.Scheduled > 0 ? Math.round(r.Completed / r.Scheduled * 100) : (r.Completed > 0 ? 100 : 0)
+  })).sort((a, b) => a.CompletionRate - b.CompletionRate);
+  res.json(rows);
+});
+
+app.get('/api/reports/repair-rates', (req, res) => {
+  const map = new Map();
+  siteServices.filter(s => s.Status === 'submitted').forEach(svc => {
+    if (!map.has(svc.ClientKey)) map.set(svc.ClientKey, { ClientKey: svc.ClientKey, ClientName: svc.ClientName, TotalInstr: 0, TotalRepaired: 0, TotalBER: 0, TotalSent: 0, Visits: 0 });
+    const entry = map.get(svc.ClientKey);
+    entry.Visits += 1;
+    const svcTrays = trays.filter(t => t.SiteServiceKey === svc.SiteServiceKey);
+    svcTrays.forEach(tray => {
+      trayItems.filter(i => i.TrayKey === tray.TrayKey).forEach(i => {
+        entry.TotalInstr += i.TotalCount;
+        entry.TotalRepaired += i.RepairedCount;
+        entry.TotalBER += i.BERCount;
+        entry.TotalSent += i.SentToTSICount;
+      });
+    });
+  });
+  const rows = [...map.values()].map(r => ({
+    ...r,
+    RepairRate: r.TotalInstr > 0 ? Math.round(r.TotalRepaired / r.TotalInstr * 100) : 0,
+    BERRate: r.TotalInstr > 0 ? Math.round(r.TotalBER / r.TotalInstr * 100) : 0,
+    SentRate: r.TotalInstr > 0 ? Math.round(r.TotalSent / r.TotalInstr * 100) : 0,
+  })).sort((a, b) => b.BERRate - a.BERRate);
+  res.json(rows);
+});
+
+app.get('/api/reports/tech-productivity', (req, res) => {
+  const map = new Map();
+  siteServices.filter(s => s.Status === 'submitted').forEach(svc => {
+    if (!map.has(svc.TechnicianKey)) map.set(svc.TechnicianKey, { TechnicianKey: svc.TechnicianKey, TechnicianName: svc.TechnicianName, Visits: 0, Instruments: 0, Repaired: 0, Value: 0 });
+    const entry = map.get(svc.TechnicianKey);
+    entry.Visits += 1;
+    const svcTrays = trays.filter(t => t.SiteServiceKey === svc.SiteServiceKey);
+    svcTrays.forEach(tray => {
+      trayItems.filter(i => i.TrayKey === tray.TrayKey).forEach(i => {
+        entry.Instruments += i.TotalCount;
+        entry.Repaired += i.RepairedCount;
+        entry.Value += i.RepairedCount * i.UnitPrice;
+      });
+    });
+  });
+  const rows = [...map.values()].map(r => ({
+    ...r,
+    AvgPerVisit: r.Visits > 0 ? Math.round(r.Instruments / r.Visits) : 0,
+  })).sort((a, b) => b.Value - a.Value);
+  res.json(rows);
+});
+
+app.get('/api/reports/tray-inventory', (req, res) => {
+  const today = new Date(); today.setHours(0,0,0,0);
+  const trayMap = new Map();
+
+  trays.forEach(tray => {
+    const svc = siteServices.find(s => s.SiteServiceKey === tray.SiteServiceKey);
+    if (!svc) return;
+    const key = `${svc.ClientKey}|${svc.DepartmentKey}|${tray.TrayName}`;
+    const items = trayItems.filter(i => i.TrayKey === tray.TrayKey);
+    const instrCount = items.reduce((s, i) => s + i.TotalCount, 0);
+    const existing = trayMap.get(key);
+    if (!existing || svc.OnsiteDate > existing.LastVisit) {
+      trayMap.set(key, {
+        ClientKey: svc.ClientKey, ClientName: svc.ClientName,
+        DepartmentKey: svc.DepartmentKey, DepartmentName: svc.DepartmentName,
+        TrayName: tray.TrayName, LastVisit: svc.OnsiteDate,
+        TechnicianName: svc.TechnicianName, InstrumentCount: instrCount,
+      });
+    }
+  });
+
+  // Also seed from templates for trays never visited
+  trayTemplates.forEach(tmpl => {
+    const key = `${tmpl.ClientKey}|${tmpl.DepartmentKey}|${tmpl.TrayName}`;
+    if (!trayMap.has(key)) {
+      const client = clients.find(c => c.ClientKey === tmpl.ClientKey);
+      const dept = departments.find(d => d.DepartmentKey === tmpl.DepartmentKey);
+      trayMap.set(key, {
+        ClientKey: tmpl.ClientKey, ClientName: client ? client.ClientName : '—',
+        DepartmentKey: tmpl.DepartmentKey, DepartmentName: dept ? dept.DepartmentName : '—',
+        TrayName: tmpl.TrayName, LastVisit: null, TechnicianName: null,
+        InstrumentCount: (tmpl.Items || []).reduce((s, i) => s + (i.DefaultCount || 0), 0),
+      });
+    }
+  });
+
+  const rows = [...trayMap.values()].map(r => ({
+    ...r,
+    DaysSince: r.LastVisit ? Math.floor((today - new Date(r.LastVisit + 'T00:00:00')) / 86400000) : 9999,
+  })).sort((a, b) => a.ClientName.localeCompare(b.ClientName) || a.TrayName.localeCompare(b.TrayName));
+
+  // Group by client for the response
+  const grouped = [];
+  const seen = new Map();
+  rows.forEach(r => {
+    if (!seen.has(r.ClientKey)) {
+      seen.set(r.ClientKey, { ClientKey: r.ClientKey, ClientName: r.ClientName, Trays: [] });
+      grouped.push(seen.get(r.ClientKey));
+    }
+    seen.get(r.ClientKey).Trays.push(r);
+  });
+
+  res.json(grouped);
+});
+
 module.exports = app;

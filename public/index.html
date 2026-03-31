@@ -421,9 +421,14 @@
 
     <!-- ── REPORTS ── -->
     <div class="view" id="view-reports">
-      <div class="report-subtabs">
-        <button class="report-subtab active" onclick="switchReportTab('tray-gap',this)">Tray Gap</button>
-        <button class="report-subtab" onclick="switchReportTab('customer-value',this)">Customer Value</button>
+      <div class="report-subtabs" style="overflow-x:auto;flex-wrap:nowrap">
+        <button class="report-subtab active" onclick="switchReportTab('tray-gap',this)" style="white-space:nowrap">Tray Gap</button>
+        <button class="report-subtab" onclick="switchReportTab('customer-value',this)" style="white-space:nowrap">Customer Value</button>
+        <button class="report-subtab" onclick="switchReportTab('instr-recurrence',this)" style="white-space:nowrap">Instrument Recurrence</button>
+        <button class="report-subtab" onclick="switchReportTab('visit-frequency',this)" style="white-space:nowrap">Visit Frequency</button>
+        <button class="report-subtab" onclick="switchReportTab('repair-rates',this)" style="white-space:nowrap">Repair Rates</button>
+        <button class="report-subtab" onclick="switchReportTab('tech-productivity',this)" style="white-space:nowrap">Tech Productivity</button>
+        <button class="report-subtab" onclick="switchReportTab('tray-inventory',this)" style="white-space:nowrap">Tray Inventory</button>
       </div>
       <div class="report-panel active" id="rpt-tray-gap">
         <div class="rpt-toolbar">
@@ -458,6 +463,85 @@
         </div>
         <div id="cvContent"><div class="empty"><p>Select a client to view their value report</p></div></div>
       </div>
+  <!-- Instrument Recurrence Panel -->
+  <div class="report-panel" id="rpt-instr-recurrence">
+    <div class="rpt-toolbar">
+      <input class="rpt-search" type="text" id="recurrSearch" placeholder="Search client or instrument..." oninput="filterRecurrence()">
+      <button class="btn-export" onclick="exportRecurrenceCSV()">
+        <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Export CSV
+      </button>
+    </div>
+    <div class="rpt-table-wrap">
+      <table class="rpt-table">
+        <thead><tr><th>Client</th><th>Instrument Type</th><th style="text-align:center">Times Flagged</th><th style="text-align:center">BER</th><th style="text-align:center">Sent to TSI</th><th>Last Seen</th><th>Signal</th></tr></thead>
+        <tbody id="recurrTableBody"><tr><td colspan="7" style="text-align:center;padding:24px;color:var(--muted)">Loading...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Visit Frequency Panel -->
+  <div class="report-panel" id="rpt-visit-frequency">
+    <div class="rpt-toolbar">
+      <input class="rpt-search" type="text" id="freqSearch" placeholder="Search client..." oninput="filterFrequency()">
+      <button class="btn-export" onclick="exportFrequencyCSV()">
+        <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Export CSV
+      </button>
+    </div>
+    <div class="rpt-table-wrap">
+      <table class="rpt-table">
+        <thead><tr><th>Client</th><th style="text-align:center">Scheduled</th><th style="text-align:center">Completed</th><th style="text-align:center">Completion Rate</th><th>Status</th></tr></thead>
+        <tbody id="freqTableBody"><tr><td colspan="5" style="text-align:center;padding:24px;color:var(--muted)">Loading...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Repair Rates Panel -->
+  <div class="report-panel" id="rpt-repair-rates">
+    <div class="rpt-toolbar">
+      <input class="rpt-search" type="text" id="ratesSearch" placeholder="Search client..." oninput="filterRepairRates()">
+      <button class="btn-export" onclick="exportRatesCSV()">
+        <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Export CSV
+      </button>
+    </div>
+    <div class="rpt-table-wrap">
+      <table class="rpt-table">
+        <thead><tr><th>Client</th><th style="text-align:center">Visits</th><th style="text-align:center">Total Instr</th><th style="text-align:center">Repair Rate</th><th style="text-align:center">BER Rate</th><th style="text-align:center">Sent to TSI Rate</th></tr></thead>
+        <tbody id="ratesTableBody"><tr><td colspan="6" style="text-align:center;padding:24px;color:var(--muted)">Loading...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Tech Productivity Panel -->
+  <div class="report-panel" id="rpt-tech-productivity">
+    <div class="rpt-toolbar">
+      <span style="font-size:12px;color:var(--muted);font-weight:600">All submitted visits</span>
+      <button class="btn-export" onclick="exportTechCSV()" style="margin-left:auto">
+        <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Export CSV
+      </button>
+    </div>
+    <div class="rpt-table-wrap">
+      <table class="rpt-table">
+        <thead><tr><th>Technician</th><th style="text-align:center">Visits</th><th style="text-align:center">Instruments</th><th style="text-align:center">Repaired</th><th style="text-align:center">Avg / Visit</th><th style="text-align:right">Value Delivered</th></tr></thead>
+        <tbody id="techTableBody"><tr><td colspan="6" style="text-align:center;padding:24px;color:var(--muted)">Loading...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Tray Inventory Panel -->
+  <div class="report-panel" id="rpt-tray-inventory">
+    <div class="rpt-toolbar">
+      <input class="rpt-search" type="text" id="invSearch" placeholder="Search client..." oninput="filterInventory()">
+      <button class="btn-export" onclick="exportInventoryCSV()">
+        <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Export CSV
+      </button>
+    </div>
+    <div id="invContent"><div class="empty"><p>Loading...</p></div></div>
+  </div>
     </div>
 
   </div>
@@ -709,6 +793,9 @@ function populateClientDropdowns() {
   document.getElementById('nvClient').innerHTML = opts;
   const cvOpts = '<option value="">— Select a Client —</option>' + clients.map(c => `<option value="${c.ClientKey}">${c.ClientName}</option>`).join('');
   document.getElementById('cvClientSelect').innerHTML = cvOpts;
+  const rptOpts = '<option value="">All Clients</option>' + clients.map(c => `<option value="${c.ClientKey}">${c.ClientName}</option>`).join('');
+  document.getElementById('rrClientSelect').innerHTML = rptOpts;
+  document.getElementById('tiClientSelect').innerHTML = rptOpts;
 }
 
 function loadCalDepts() {
@@ -1878,10 +1965,20 @@ function switchReportTab(name, btn) {
   btn.classList.add('active');
   document.querySelectorAll('.report-panel').forEach(p => p.classList.remove('active'));
   document.getElementById('rpt-' + name).classList.add('active');
+  if (name === 'instrument-recurrence') loadIRReport();
+  if (name === 'visit-frequency') loadVFReport();
+  if (name === 'repair-rate') loadRepairRate();
+  if (name === 'tech-productivity') loadTPReport();
+  if (name === 'tray-inventory') loadTrayInventory();
 }
 
 async function loadReports() {
   await loadGapReport();
+  loadRecurrence();
+  loadFrequency();
+  loadRepairRates();
+  loadTechProductivity();
+  loadInventory();
 }
 
 async function loadGapReport() {
@@ -1984,6 +2081,164 @@ function renderCustomerValue(data) {
     <thead><tr><th>Date</th><th>Dept</th><th>Tech</th><th style="text-align:center">Trays</th><th style="text-align:center">Instruments</th><th style="text-align:center">Repaired</th><th style="text-align:right">Value</th></tr></thead>
     <tbody>${visitRows || '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--muted)">No submitted visits for this client</td></tr>'}</tbody>
   </table></div>`;
+}
+
+// ── INSTRUMENT RECURRENCE ─────────────────────────────────────────────────────
+let recurrData = [];
+async function loadRecurrence() {
+  document.getElementById('recurrTableBody').innerHTML = '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--muted)">Loading...</td></tr>';
+  recurrData = await fetch('/api/reports/instrument-recurrence').then(r => r.json());
+  renderRecurrence(recurrData);
+}
+function filterRecurrence() {
+  const q = document.getElementById('recurrSearch').value.toLowerCase();
+  renderRecurrence(q ? recurrData.filter(r => r.ClientName.toLowerCase().includes(q) || r.InstrumentType.toLowerCase().includes(q)) : recurrData);
+}
+function renderRecurrence(rows) {
+  if (!rows.length) { document.getElementById('recurrTableBody').innerHTML = '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--muted)">No flagged instruments found</td></tr>'; return; }
+  document.getElementById('recurrTableBody').innerHTML = rows.map(r => {
+    const signal = r.TotalFlags >= 3 ? `<span class="gap-chip gap-red">High Risk</span>` : r.TotalFlags >= 2 ? `<span class="gap-chip gap-amber">Watch</span>` : `<span class="gap-chip gap-green">Low</span>`;
+    const lastSeen = r.LastSeen ? new Date(r.LastSeen+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '—';
+    return `<tr><td>${r.ClientName}</td><td style="font-weight:600">${r.InstrumentType}</td><td style="text-align:center;font-weight:700">${r.TotalFlags}</td><td style="text-align:center;color:var(--red)">${r.BERCount}</td><td style="text-align:center;color:var(--muted)">${r.SentToTSICount}</td><td class="muted">${lastSeen}</td><td>${signal}</td></tr>`;
+  }).join('');
+}
+function exportRecurrenceCSV() {
+  const q = document.getElementById('recurrSearch').value.toLowerCase();
+  const rows = q ? recurrData.filter(r => r.ClientName.toLowerCase().includes(q) || r.InstrumentType.toLowerCase().includes(q)) : recurrData;
+  const lines = [['Client','Instrument Type','Times Flagged','BER','Sent to TSI','Last Seen','Signal'],
+    ...rows.map(r => [r.ClientName, r.InstrumentType, r.TotalFlags, r.BERCount, r.SentToTSICount, r.LastSeen||'', r.TotalFlags>=3?'High Risk':r.TotalFlags>=2?'Watch':'Low'])
+  ].map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(','));
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([lines.join('\n')],{type:'text/csv'}));
+  a.download = `instrument-recurrence-${new Date().toISOString().slice(0,10)}.csv`; a.click();
+}
+
+// ── VISIT FREQUENCY ───────────────────────────────────────────────────────────
+let freqData = [];
+async function loadFrequency() {
+  document.getElementById('freqTableBody').innerHTML = '<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--muted)">Loading...</td></tr>';
+  freqData = await fetch('/api/reports/visit-frequency').then(r => r.json());
+  renderFrequency(freqData);
+}
+function filterFrequency() {
+  const q = document.getElementById('freqSearch').value.toLowerCase();
+  renderFrequency(q ? freqData.filter(r => r.ClientName.toLowerCase().includes(q)) : freqData);
+}
+function renderFrequency(rows) {
+  if (!rows.length) { document.getElementById('freqTableBody').innerHTML = '<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--muted)">No data</td></tr>'; return; }
+  document.getElementById('freqTableBody').innerHTML = rows.map(r => {
+    const rate = r.CompletionRate;
+    const chip = rate >= 80 ? `<span class="gap-chip gap-green">${rate}%</span>` : rate >= 50 ? `<span class="gap-chip gap-amber">${rate}%</span>` : `<span class="gap-chip gap-red">${rate}%</span>`;
+    const status = rate >= 80 ? `<span class="gap-chip gap-green">On Track</span>` : rate >= 50 ? `<span class="gap-chip gap-amber">At Risk</span>` : `<span class="gap-chip gap-red">Falling Behind</span>`;
+    return `<tr><td>${r.ClientName}</td><td style="text-align:center">${r.Scheduled}</td><td style="text-align:center">${r.Completed}</td><td style="text-align:center">${chip}</td><td>${status}</td></tr>`;
+  }).join('');
+}
+function exportFrequencyCSV() {
+  const q = document.getElementById('freqSearch').value.toLowerCase();
+  const rows = q ? freqData.filter(r => r.ClientName.toLowerCase().includes(q)) : freqData;
+  const lines = [['Client','Scheduled','Completed','Completion Rate','Status'],
+    ...rows.map(r => [r.ClientName, r.Scheduled, r.Completed, r.CompletionRate+'%', r.CompletionRate>=80?'On Track':r.CompletionRate>=50?'At Risk':'Falling Behind'])
+  ].map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(','));
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([lines.join('\n')],{type:'text/csv'}));
+  a.download = `visit-frequency-${new Date().toISOString().slice(0,10)}.csv`; a.click();
+}
+
+// ── REPAIR RATES ──────────────────────────────────────────────────────────────
+let ratesData = [];
+async function loadRepairRates() {
+  document.getElementById('ratesTableBody').innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--muted)">Loading...</td></tr>';
+  ratesData = await fetch('/api/reports/repair-rates').then(r => r.json());
+  renderRepairRates(ratesData);
+}
+function filterRepairRates() {
+  const q = document.getElementById('ratesSearch').value.toLowerCase();
+  renderRepairRates(q ? ratesData.filter(r => r.ClientName.toLowerCase().includes(q)) : ratesData);
+}
+function rateBar(pct, color) {
+  return `<div style="display:flex;align-items:center;gap:6px"><div style="flex:1;height:6px;background:var(--border);border-radius:3px"><div style="width:${pct}%;height:100%;background:${color};border-radius:3px"></div></div><span style="font-size:11px;font-weight:700;min-width:30px">${pct}%</span></div>`;
+}
+function renderRepairRates(rows) {
+  if (!rows.length) { document.getElementById('ratesTableBody').innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--muted)">No data</td></tr>'; return; }
+  document.getElementById('ratesTableBody').innerHTML = rows.map(r => `<tr>
+    <td>${r.ClientName}</td>
+    <td style="text-align:center">${r.Visits}</td>
+    <td style="text-align:center">${r.TotalInstr}</td>
+    <td style="min-width:120px">${rateBar(r.RepairRate,'var(--green)')}</td>
+    <td style="min-width:120px">${rateBar(r.BERRate,'var(--red)')}</td>
+    <td style="min-width:120px">${rateBar(r.SentRate,'var(--muted)')}</td>
+  </tr>`).join('');
+}
+function exportRatesCSV() {
+  const q = document.getElementById('ratesSearch').value.toLowerCase();
+  const rows = q ? ratesData.filter(r => r.ClientName.toLowerCase().includes(q)) : ratesData;
+  const lines = [['Client','Visits','Total Instruments','Repair Rate','BER Rate','Sent to TSI Rate'],
+    ...rows.map(r => [r.ClientName, r.Visits, r.TotalInstr, r.RepairRate+'%', r.BERRate+'%', r.SentRate+'%'])
+  ].map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(','));
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([lines.join('\n')],{type:'text/csv'}));
+  a.download = `repair-rates-${new Date().toISOString().slice(0,10)}.csv`; a.click();
+}
+
+// ── TECH PRODUCTIVITY ─────────────────────────────────────────────────────────
+let techData = [];
+async function loadTechProductivity() {
+  document.getElementById('techTableBody').innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--muted)">Loading...</td></tr>';
+  techData = await fetch('/api/reports/tech-productivity').then(r => r.json());
+  renderTechProductivity(techData);
+}
+function renderTechProductivity(rows) {
+  if (!rows.length) { document.getElementById('techTableBody').innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--muted)">No data</td></tr>'; return; }
+  const fmt = n => '$'+Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  document.getElementById('techTableBody').innerHTML = rows.map(r => `<tr>
+    <td style="font-weight:600">${r.TechnicianName}</td>
+    <td style="text-align:center">${r.Visits}</td>
+    <td style="text-align:center">${r.Instruments}</td>
+    <td style="text-align:center">${r.Repaired}</td>
+    <td style="text-align:center">${r.AvgPerVisit}</td>
+    <td style="text-align:right;font-weight:700;color:var(--navy)">${fmt(r.Value)}</td>
+  </tr>`).join('');
+}
+function exportTechCSV() {
+  const fmt = n => '$'+Number(n).toFixed(2);
+  const lines = [['Technician','Visits','Instruments','Repaired','Avg Per Visit','Value Delivered'],
+    ...techData.map(r => [r.TechnicianName, r.Visits, r.Instruments, r.Repaired, r.AvgPerVisit, fmt(r.Value)])
+  ].map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(','));
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([lines.join('\n')],{type:'text/csv'}));
+  a.download = `tech-productivity-${new Date().toISOString().slice(0,10)}.csv`; a.click();
+}
+
+// ── TRAY INVENTORY ────────────────────────────────────────────────────────────
+let invData = [];
+async function loadInventory() {
+  document.getElementById('invContent').innerHTML = '<div class="loading"><div class="spinner"></div>Loading...</div>';
+  invData = await fetch('/api/reports/tray-inventory').then(r => r.json());
+  renderInventory(invData);
+}
+function filterInventory() {
+  const q = document.getElementById('invSearch').value.toLowerCase();
+  renderInventory(q ? invData.filter(g => g.ClientName.toLowerCase().includes(q)) : invData);
+}
+function renderInventory(groups) {
+  if (!groups.length) { document.getElementById('invContent').innerHTML = '<div class="empty"><p>No tray inventory data</p></div>'; return; }
+  document.getElementById('invContent').innerHTML = groups.map(g => {
+    const rows = g.Trays.map(t => {
+      const lastVisit = t.LastVisit ? new Date(t.LastVisit+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '—';
+      const chip = t.DaysSince >= 9999 ? `<span class="gap-chip gap-red">Never</span>` : t.DaysSince < 30 ? `<span class="gap-chip gap-green">${t.DaysSince}d</span>` : t.DaysSince < 60 ? `<span class="gap-chip gap-amber">${t.DaysSince}d</span>` : `<span class="gap-chip gap-red">${t.DaysSince}d</span>`;
+      return `<tr><td style="font-weight:600">${t.TrayName}</td><td class="muted">${t.DepartmentName}</td><td style="text-align:center">${t.InstrumentCount || '—'}</td><td class="muted">${lastVisit}</td><td class="muted">${t.TechnicianName||'—'}</td><td>${chip}</td></tr>`;
+    }).join('');
+    return `<div style="margin-bottom:16px">
+      <div style="background:var(--navy);color:#fff;padding:8px 12px;border-radius:8px 8px 0 0;font-size:12px;font-weight:700">${g.ClientName} <span style="font-weight:400;opacity:.7">(${g.Trays.length} tray${g.Trays.length!==1?'s':''})</span></div>
+      <div class="rpt-table-wrap" style="border-radius:0 0 8px 8px;border-top:none">
+        <table class="rpt-table"><thead><tr><th>Tray Name</th><th>Department</th><th style="text-align:center">Instruments</th><th>Last Visit</th><th>Tech</th><th>Last Service</th></tr></thead>
+        <tbody>${rows}</tbody></table>
+      </div></div>`;
+  }).join('');
+}
+function exportInventoryCSV() {
+  const q = document.getElementById('invSearch').value.toLowerCase();
+  const groups = q ? invData.filter(g => g.ClientName.toLowerCase().includes(q)) : invData;
+  const allRows = groups.flatMap(g => g.Trays.map(t => [g.ClientName, t.DepartmentName, t.TrayName, t.InstrumentCount||0, t.LastVisit||'Never', t.DaysSince>=9999?'Never':t.DaysSince+'d', t.TechnicianName||'']));
+  const lines = [['Client','Department','Tray Name','Instruments','Last Visit','Days Since','Last Tech'], ...allRows].map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(','));
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([lines.join('\n')],{type:'text/csv'}));
+  a.download = `tray-inventory-${new Date().toISOString().slice(0,10)}.csv`; a.click();
 }
 
 // ── BOOT ──────────────────────────────────────────────────────────────────────
